@@ -1,0 +1,2 @@
+# backend
+Część serwerowa aplikacji
