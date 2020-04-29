@@ -1,36 +1,38 @@
 package edu.agh.iet.BSc_Thesis.Controller
 
-import edu.agh.iet.BSc_Thesis.Model.Task
+import edu.agh.iet.BSc_Thesis.Model.Entities.Task
+import edu.agh.iet.BSc_Thesis.Repositories.TaskRepository
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
-import kotlin.random.Random
 
 @RestController
 @RequestMapping("/tasks")
 class TaskController {
 
-    val taskStores = mutableMapOf<Long, Task>()
+    @Autowired
+    lateinit var taskRepository: TaskRepository
 
     @PostMapping("/create")
     fun addTask(@RequestBody task: Task): String {
-        task.id = 1
-        return "success" + task.id
+        taskRepository.save(task)
+        return "success"
     }
 
     @PostMapping("/{id}")
     fun addTask(@PathVariable id: Long, @RequestBody task: Task): String {
         task.id = id
-        taskStores[task.id]
+        taskRepository.save(task)
         return "success"
     }
 
     @GetMapping("/{id}")
-    fun getTask(@PathVariable id: Long): Task? {
-        return taskStores[id]
+    fun getTask(@PathVariable id: Long): Task {
+        return taskRepository.getOne(id)
     }
 
-    @GetMapping("/")
-    fun getTasks(): MutableMap<Long, Task> {
-        return taskStores
+    @GetMapping("")
+    fun getTasks(): List<Task> {
+        return taskRepository.findAll()
     }
 
 }
