@@ -12,18 +12,12 @@ data class Task(
         var name: String = "",
         var subject: String? = "",
         var description: String = "",
-        @OneToMany
-        var tools: List<Tool> = emptyList(),
+        @ElementCollection
+        var tools: MutableList<String?>?,
         var minutes: Long = -1,
         var type: String = ""
 ){
     override fun toString(): String{
         return "{name: ${this.name}";
     }
-
-    @Entity         //to refactor  - to new class etc
-    data class Tool(
-            @Id
-            val id: String
-    )
 }

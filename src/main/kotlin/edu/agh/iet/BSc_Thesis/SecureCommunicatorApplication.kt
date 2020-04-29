@@ -1,12 +1,11 @@
 package edu.agh.iet.BSc_Thesis
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.runApplication
+import java.sql.DriverManager
 
-@SpringBootApplication(
-		exclude = [DataSourceAutoConfiguration::class]
-)
+
+@SpringBootApplication
 class SecureCommunicatorApplication
 
 fun main(args: Array<String>) {
