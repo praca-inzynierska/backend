@@ -25,9 +25,13 @@ class UserController {
 
     @CrossOrigin
     @PostMapping("")
-    fun addTask(@RequestBody user: User): String {
+    fun addTask(@RequestBody user: User): LoginResponse {
         userRepository.save(user)
-        return "token" + user.id
+        return LoginResponse("token" + user.username)
     }
 
 }
+
+data class LoginResponse (
+        var token: String
+)
