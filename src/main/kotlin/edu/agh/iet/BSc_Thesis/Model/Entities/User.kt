@@ -1,5 +1,6 @@
 package edu.agh.iet.BSc_Thesis.Model.Entities
 
+import java.io.Serializable
 import javax.persistence.*;
 
 @Entity
@@ -9,5 +10,9 @@ data class User(
         var id: Long = -1,
         var username: String = "",
         var password: String = "",
-        var isTeacher: Int = 0
-)
+        var isTeacher: Boolean = false
+) : Serializable {
+        constructor(username: String,
+                    password: String,
+                    isTeacher: Boolean = false) : this(id = -1, username = username, password = password, isTeacher = isTeacher)
+}

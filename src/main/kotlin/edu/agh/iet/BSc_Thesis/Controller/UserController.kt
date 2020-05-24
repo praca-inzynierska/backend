@@ -2,36 +2,51 @@ package edu.agh.iet.BSc_Thesis.Controller
 
 import edu.agh.iet.BSc_Thesis.Model.Entities.User
 import edu.agh.iet.BSc_Thesis.Repositories.UserRepository
+import edu.agh.iet.BSc_Thesis.Util.JwtUtils.generateToken
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Example
 import org.springframework.web.bind.annotation.*
-import javax.servlet.http.HttpServletResponse
 
 
 @RestController
-@RequestMapping("/login")
-class UserController {
+@RequestMapping("")
+class UserController : BaseController() {
 
     @Autowired
     lateinit var userRepository: UserRepository
 
     @CrossOrigin
-    @RequestMapping(value = ["/**"], method = [RequestMethod.OPTIONS])
-    fun corsHeaders(response: HttpServletResponse) {
-        response.addHeader("Access-Control-Allow-Origin", "*")
-        response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-        response.addHeader("Access-Control-Allow-Headers", "origin, content-type, accept, x-requested-with")
-        response.addHeader("Access-Control-Max-Age", "3600")
+    @PostMapping("/register")
+    fun register(@RequestBody registerRequest: RegisterRequest): LoginResponse {
+        val userToCreate: User = registerRequest.userFromRequest()
+        userRepository.save(userToCreate)
+        return LoginResponse(generateToken(userToCreate))
     }
 
     @CrossOrigin
-    @PostMapping("")
-    fun addTask(@RequestBody user: User): LoginResponse {
-        userRepository.save(user)
-        return LoginResponse("token" + user.username)
+    @PostMapping("/login")
+    fun login(@RequestBody loginRequest: LoginRequest): LoginResponse {
+        val user = userRepository.getUserByUsernameAndPassword(username = loginRequest.username, password = loginRequest.password)
+        return LoginResponse(generateToken(user))
     }
 
 }
 
-data class LoginResponse (
+data class LoginResponse(
         var token: String
 )
+
+data class LoginRequest(
+        var username: String,
+        var password: String
+)
+
+data class RegisterRequest(
+        var username: String,
+        var password: String,
+        var isTeacher: Boolean
+) {
+    fun userFromRequest(): User {
+        return User(username, password, isTeacher)
+    }
+}

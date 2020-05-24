@@ -9,19 +9,11 @@ import javax.servlet.http.HttpServletResponse
 
 @RestController
 @RequestMapping("/tasks")
-class TaskController {
+class TaskController : BaseController() {
 
     @Autowired
     lateinit var taskRepository: TaskRepository
 
-    @CrossOrigin
-    @RequestMapping(value = ["/**"], method = [RequestMethod.OPTIONS])
-    fun corsHeaders(response: HttpServletResponse) {
-        response.addHeader("Access-Control-Allow-Origin", "*")
-        response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-        response.addHeader("Access-Control-Allow-Headers", "origin, content-type, accept, x-requested-with")
-        response.addHeader("Access-Control-Max-Age", "3600")
-    }
 
     @CrossOrigin
     @PostMapping("/create")
@@ -46,8 +38,8 @@ class TaskController {
 
     @CrossOrigin
     @GetMapping("")
-    fun getTasks(): List<Task> {
+    fun getTasks(@RequestHeader("Token") token: String): List<Task> {
+        print(token)
         return taskRepository.findAll()
     }
-
 }
