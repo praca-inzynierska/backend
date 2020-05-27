@@ -31,7 +31,7 @@ object JwtUtils {
     }
 
     fun getClaimsFromToken(token: String): Claims {
-        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).body;
     }
 
     fun Claims.getUsername(): String {

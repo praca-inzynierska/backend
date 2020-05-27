@@ -4,7 +4,6 @@ import edu.agh.iet.BSc_Thesis.Model.Entities.User
 import edu.agh.iet.BSc_Thesis.Repositories.UserRepository
 import edu.agh.iet.BSc_Thesis.Util.JwtUtils.generateToken
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.domain.Example
 import org.springframework.web.bind.annotation.*
 
 
@@ -26,7 +25,7 @@ class UserController : BaseController() {
     @CrossOrigin
     @PostMapping("/login")
     fun login(@RequestBody loginRequest: LoginRequest): LoginResponse {
-        val user = userRepository.getUserByUsernameAndPassword(username = loginRequest.username, password = loginRequest.password)
+        var user = userRepository.getUserByUsernameAndPassword(username = loginRequest.username, password = loginRequest.password)
         return LoginResponse(generateToken(user))
     }
 

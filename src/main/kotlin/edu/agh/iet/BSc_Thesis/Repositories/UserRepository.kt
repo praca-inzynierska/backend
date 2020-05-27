@@ -16,4 +16,10 @@ interface UserRepository : JpaRepository<User, Long> {
         val userToFind: User = User(username = username, password = password)
         return this.findOne(Example.of(userToFind)).get()
     }
+
+    fun getUserIdByUsername(username: String): Long {
+        val userToFind: User = User(username = username)
+        return this.findOne(Example.of(userToFind)).get().id
+    }
+
 }
