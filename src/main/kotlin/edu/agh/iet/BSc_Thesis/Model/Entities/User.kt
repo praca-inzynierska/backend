@@ -8,8 +8,12 @@ import javax.persistence.*;
 data class User(
         @Id @GeneratedValue(strategy = GenerationType.AUTO)
         var id: Long = -1,
+
+        @Column(unique=true)
         var username: String = "",
+
         var password: String = "",
+
         var isTeacher: Boolean = false
 ) : Serializable {
         constructor(username: String,

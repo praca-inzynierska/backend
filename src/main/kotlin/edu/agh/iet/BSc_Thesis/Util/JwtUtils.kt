@@ -1,16 +1,21 @@
 package edu.agh.iet.BSc_Thesis.Util
 
 import edu.agh.iet.BSc_Thesis.Model.Entities.User
+import edu.agh.iet.BSc_Thesis.Repositories.UserRepository
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.stereotype.Component
 import java.util.*
 
-
+@Component
 object JwtUtils {
     private const val secret: String = "secretkeychangeitpls"
     private const val defaultTokenTimeout = 5 * 60 * 60
+
+    lateinit var userRepository: UserRepository
 
     fun generateToken(userDetails: User): String {
         val claims: Map<String, Any> = HashMap()
@@ -22,12 +27,13 @@ object JwtUtils {
                 .signWith(SignatureAlgorithm.HS512, secret).compact()
     }
 
-    fun validateToken(user: User, token: String): Boolean {
+    fun validateToken(token: String): Boolean {
         val claims = getClaimsFromToken(token)
         val usernameFromToken = claims.subject
         val expirationDate = claims.expiration
+        val userExists = userRepository.getUserByUsername(usernameFromToken) != null
 
-        return (expirationDate.after(Date(System.currentTimeMillis())))
+        return (expirationDate.after(Date(System.currentTimeMillis())) && userExists)
     }
 
     fun getClaimsFromToken(token: String): Claims {

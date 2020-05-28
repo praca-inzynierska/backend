@@ -25,7 +25,7 @@ class TaskController : BaseController() {
     @CrossOrigin
     @PostMapping("/create")
     fun addTask(@RequestBody task: Task, @RequestHeader("Token") token: String): String {
-        val user = userRepository.getUserByUsername(getClaimsFromToken(token).getUsername())
+        val user = userRepository.getUserByUsername(getClaimsFromToken(token).getUsername())!!
         task.teacher = user.id
         taskRepository.save(task)
         return "success"
@@ -35,7 +35,7 @@ class TaskController : BaseController() {
     @PostMapping("/{id}")
     fun addTask(@PathVariable id: Long, @RequestBody task: Task, @RequestHeader("Token") token: String): String {
         task.id = id
-        val user = userRepository.getUserByUsername(getClaimsFromToken(token).getUsername())
+        val user = userRepository.getUserByUsername(getClaimsFromToken(token).getUsername())!!
         task.teacher = user.id
         taskRepository.save(task)
         return "success"
@@ -50,7 +50,7 @@ class TaskController : BaseController() {
     @CrossOrigin
     @GetMapping("")
     fun getTasks(@RequestHeader("Token") token: String): List<Task> {
-        val user = userRepository.getUserByUsername(getClaimsFromToken(token).getUsername())
+        val user = userRepository.getUserByUsername(getClaimsFromToken(token).getUsername())!!
         return taskRepository.getTasksByTeacher(user.id)
     }
 }
