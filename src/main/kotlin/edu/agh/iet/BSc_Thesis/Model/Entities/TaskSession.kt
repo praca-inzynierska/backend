@@ -8,7 +8,8 @@ data class TaskSession(
 
         @Id @GeneratedValue(strategy = GenerationType.AUTO)
         var id: Long = -1,
-        var task: Long = -1,
+        var task: Long,
+        var classSession: Long = -1,
         @ElementCollection
         var students: MutableList<Long?>?,
         var grade: Int,
