@@ -37,10 +37,20 @@ object JwtUtils {
     }
 
     fun getClaimsFromToken(token: String): Claims {
-        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).body;
+        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token.trim()).body;
     }
 
     fun Claims.getUsername(): String {
         return this.subject
+    }
+
+    fun getUserFromToken(token: String): User {
+        return userRepository.getUserByUsername(getClaimsFromToken(token).getUsername())!!
+    }
+
+    fun isTeacher(token: String): Boolean {
+        val username = getClaimsFromToken(token).getUsername()
+        val user = userRepository.getUserByUsername(username)
+        return (user != null && user.isTeacher)
     }
 }

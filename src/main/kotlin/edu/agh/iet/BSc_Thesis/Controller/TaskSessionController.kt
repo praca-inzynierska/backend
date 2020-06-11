@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/taskSessions")
 class TaskSessionController : BaseController() {
 
     @Autowired
@@ -15,24 +15,24 @@ class TaskSessionController : BaseController() {
     @CrossOrigin
     @PostMapping("/create")
     fun addTask(@RequestBody task: Task, @RequestHeader("Token") token: String): String {
-
+        TODO()
     }
 
     @CrossOrigin
     @PostMapping("/{id}")
     fun addTask(@PathVariable id: Long, @RequestBody task: Task, @RequestHeader("Token") token: String): String {
-
+        TODO()
     }
 
     @CrossOrigin
     @GetMapping("/{id}")
     fun getTask(@PathVariable id: Long, @RequestHeader("Token") token: String): Task {
-
+        TODO()
     }
 
     @CrossOrigin
     @GetMapping("")
     fun getTasks(@RequestHeader("Token") token: String): List<Task> {
-
+        TODO()
     }
 }
