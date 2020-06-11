@@ -9,9 +9,10 @@ data class TaskSession(
         @Id @GeneratedValue(strategy = GenerationType.AUTO)
         var id: Long = -1,
         var task: Long = -1,
+        var classSession: Long = -1,
         @ElementCollection
         var students: MutableList<Long?>?,
-        var grade: Int,
-        var needsHelp: Boolean,
-        var readyToRate: Boolean
+        var grade: Int = -1,
+        var needsHelp: Boolean = false,
+        var readyToRate: Boolean = false
 )
