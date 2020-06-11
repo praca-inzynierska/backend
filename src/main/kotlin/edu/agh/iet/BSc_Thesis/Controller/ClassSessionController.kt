@@ -6,7 +6,6 @@ import edu.agh.iet.BSc_Thesis.Model.Entities.ClassSessionSpecifications.hasParti
 import edu.agh.iet.BSc_Thesis.Repositories.ClassSessionRepository
 import edu.agh.iet.BSc_Thesis.Repositories.UserRepository
 import edu.agh.iet.BSc_Thesis.Util.JwtUtils
-import edu.agh.iet.BSc_Thesis.Util.JwtUtils.getUsername
 import edu.agh.iet.BSc_Thesis.Util.JwtUtils.isTeacher
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -28,8 +27,8 @@ class ClassSessionController : BaseController() {
     @PostMapping("/create")
     fun addClassSession(@RequestBody classSessionRequest: ClassSessionRequest, @RequestHeader("Token") token: String): ResponseEntity<Any> {
         if (isTeacher(token)) {
-            val user = userRepository.getUserByUsername(JwtUtils.getClaimsFromToken(token).getUsername())
-            val newClassSession = classSessionRequest.toNewClassSession(user?.id!!)
+            val user = JwtUtils.getUserFromToken(token)
+            val newClassSession = classSessionRequest.toNewClassSession(user.id)
             classSessionRepository.save(newClassSession)
             return ResponseEntity(newClassSession, CREATED)
         } else return ResponseEntity(UNAUTHORIZED)
@@ -37,12 +36,12 @@ class ClassSessionController : BaseController() {
 
     @CrossOrigin
     @PostMapping("/{id}")
-    fun editClassSession(@PathVariable id: Long, @RequestBody classSession: ClassSession, @RequestHeader("Token") token: String): ResponseEntity<HttpStatus> {
+    fun editClassSession(@PathVariable id: Long, @RequestBody newClassSession: ClassSession, @RequestHeader("Token") token: String): ResponseEntity<HttpStatus> {
         if (isTeacher(token)) {
             val teacher = JwtUtils.getUserFromToken(token)
             val editedClassSession = classSessionRepository.getOne(id)
             if (editedClassSession.teacher == teacher.id) {
-                classSessionRepository.save(editedClassSession)
+                classSessionRepository.save(newClassSession)
                 return ResponseEntity(OK)
             } else return ResponseEntity(UNAUTHORIZED)
         } else return ResponseEntity(UNAUTHORIZED)
