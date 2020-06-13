@@ -14,4 +14,5 @@ interface UserRepository : JpaRepository<User, Long> {
 
     fun getUserIdByUsername(username: String): Long
 
+    fun getAllByIdIn(ids: List<Long>): List<User>
 }

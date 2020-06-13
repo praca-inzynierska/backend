@@ -8,18 +8,18 @@ import javax.persistence.*
 @Table(name = "classSession")
 data class ClassSession(
 
-        @Id @GeneratedValue(strategy = GenerationType.AUTO)
-        var id: Long = -1,
-        @ElementCollection
-        var students: MutableList<Long>,
+        @OneToMany
+        var students: MutableList<User>,
         var teacher: Long,
-        @ElementCollection
-        var taskSessions: MutableList<Long>,
+        @OneToMany
+        var taskSessions: MutableList<TaskSession> = mutableListOf(),
         var startDate: Long,
-        var endDate: Long
+        var endDate: Long,
+        @Id @GeneratedValue(strategy = GenerationType.AUTO)
+        var id: Long = -1
 ) {
     fun addTaskSession(taskSession: TaskSession) {
-        taskSessions.add(taskSession.id)
+        taskSessions.add(taskSession)
     }
 }
 
@@ -27,16 +27,7 @@ data class ClassSessionRequest(
         var students: MutableList<Long>,
         var startDate: Long,
         var endDate: Long
-) {
-    fun toNewClassSession(teacher: Long): ClassSession {
-        return ClassSession(
-                students = students,
-                startDate = startDate,
-                endDate = endDate,
-                teacher = teacher,
-                taskSessions = mutableListOf())
-    }
-}
+)
 
 object ClassSessionSpecifications {
     fun hasParticipantOfId(id: Long): Specification<ClassSession> {
