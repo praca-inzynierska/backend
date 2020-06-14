@@ -10,16 +10,16 @@ data class ClassSession(
 
         @Id @GeneratedValue(strategy = GenerationType.AUTO)
         var id: Long = -1,
-        @ElementCollection
+        @ElementCollection              //TODO change to oneToMany
         var students: MutableList<Long>,
         var teacher: Long,
-        @ElementCollection
-        var taskSessions: MutableList<Long>,
+        @OneToMany
+        var taskSessions: MutableList<TaskSession>,
         var startDate: Long,
         var endDate: Long
 ) {
     fun addTaskSession(taskSession: TaskSession) {
-        taskSessions.add(taskSession.id)
+        taskSessions.add(taskSession)
     }
 }
 

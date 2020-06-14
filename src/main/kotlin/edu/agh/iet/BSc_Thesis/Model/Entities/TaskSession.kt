@@ -10,7 +10,7 @@ data class TaskSession(
         var id: Long = -1,
         var task: Long = -1,
         var classSession: Long = -1,
-        @ElementCollection
+        @ElementCollection                  //TODO change to oneToMany
         var students: MutableList<Long?>?,
         var grade: Int = -1,
         var needsHelp: Boolean = false,

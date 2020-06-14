@@ -12,8 +12,8 @@ data class Task(
         var name: String = "",
         var subject: String? = "",
         var description: String = "",
-        @ElementCollection
-        var tools: MutableList<String?>?,
+        @OneToMany
+        var tools: MutableList<Tool>,
         var minutes: Long = -1,
         var type: String = ""
 ){
