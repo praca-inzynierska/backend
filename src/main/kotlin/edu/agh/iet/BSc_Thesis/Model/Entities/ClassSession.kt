@@ -8,15 +8,15 @@ import javax.persistence.*
 @Table(name = "classSession")
 data class ClassSession(
 
-        @Id @GeneratedValue(strategy = GenerationType.AUTO)
-        var id: Long = -1,
         @OneToMany
         var students: MutableList<User>,
         var teacher: Long,
         @OneToMany
         var taskSessions: MutableList<TaskSession> = mutableListOf(),
         var startDate: Long,
-        var endDate: Long
+        var endDate: Long,
+        @Id @GeneratedValue(strategy = GenerationType.AUTO)
+        var id: Long = -1
 ) {
     fun addTaskSession(taskSession: TaskSession) {
         taskSessions.add(taskSession)
