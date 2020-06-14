@@ -15,6 +15,7 @@ object JwtUtils {
     private const val secret: String = "secretkeychangeitpls"
     private const val defaultTokenTimeout = 5 * 60 * 60
 
+    @Autowired
     lateinit var userRepository: UserRepository
 
     fun generateToken(userDetails: User): String {

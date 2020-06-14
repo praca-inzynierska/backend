@@ -10,11 +10,11 @@ data class ClassSession(
 
         @Id @GeneratedValue(strategy = GenerationType.AUTO)
         var id: Long = -1,
-        @ElementCollection              //TODO change to oneToMany
-        var students: MutableList<Long>,
+        @OneToMany
+        var students: MutableList<User>,
         var teacher: Long,
         @OneToMany
-        var taskSessions: MutableList<TaskSession>,
+        var taskSessions: MutableList<TaskSession> = mutableListOf(),
         var startDate: Long,
         var endDate: Long
 ) {
@@ -27,16 +27,7 @@ data class ClassSessionRequest(
         var students: MutableList<Long>,
         var startDate: Long,
         var endDate: Long
-) {
-    fun toNewClassSession(teacher: Long): ClassSession {
-        return ClassSession(
-                students = students,
-                startDate = startDate,
-                endDate = endDate,
-                teacher = teacher,
-                taskSessions = mutableListOf())
-    }
-}
+)
 
 object ClassSessionSpecifications {
     fun hasParticipantOfId(id: Long): Specification<ClassSession> {

@@ -28,14 +28,15 @@ class ClassSessionController : BaseController() {
     fun addClassSession(@RequestBody classSessionRequest: ClassSessionRequest, @RequestHeader("Token") token: String): ResponseEntity<Any> {
         if (isTeacher(token)) {
             val user = JwtUtils.getUserFromToken(token)
-            val newClassSession = classSessionRequest.toNewClassSession(user.id)
+            val students = userRepository.findAllById(classSessionRequest.students)
+            val newClassSession = ClassSession(students, user.id, startDate = classSessionRequest.startDate, endDate = classSessionRequest.endDate)
             classSessionRepository.save(newClassSession)
             return ResponseEntity(newClassSession, CREATED)
         } else return ResponseEntity(UNAUTHORIZED)
     }
 
     @CrossOrigin
-    @PostMapping("/{id}")
+    @PostMapping("/create/{id}")
     fun editClassSession(@PathVariable id: Long, @RequestBody newClassSession: ClassSession, @RequestHeader("Token") token: String): ResponseEntity<HttpStatus> {
         if (isTeacher(token)) {
             val teacher = JwtUtils.getUserFromToken(token)
@@ -52,7 +53,7 @@ class ClassSessionController : BaseController() {
     fun getClassSession(@PathVariable id: Long, @RequestHeader("Token") token: String): ResponseEntity<Any> {
         val user = JwtUtils.getUserFromToken(token)
         val classSession = classSessionRepository.getOne(id)
-        if (classSession.teacher == user.id || classSession.students.contains(user.id)){
+        if (classSession.teacher == user.id || classSession.students.contains(user)){
             return ResponseEntity(classSession, OK)
         } else return ResponseEntity(UNAUTHORIZED)
     }
