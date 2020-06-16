@@ -1,10 +1,12 @@
 package edu.agh.iet.BSc_Thesis.Model.Entities
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.io.Serializable
 import javax.persistence.*;
 
 @Entity
 @Table(name = "user")
+@JsonIgnoreProperties("username", "password")
 data class User(
         @Id @GeneratedValue(strategy = GenerationType.AUTO)
         var id: Long = -1,
@@ -26,5 +28,4 @@ data class User(
             firstName = firstName,
             lastName = lastName,
             isTeacher = isTeacher)
-
 }

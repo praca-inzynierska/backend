@@ -36,7 +36,7 @@ class ClassSessionController : BaseController() {
     }
 
     @CrossOrigin
-    @PostMapping("/create/{id}")
+    @PostMapping("/edit/{id}")
     fun editClassSession(@PathVariable id: Long, @RequestBody newClassSession: ClassSession, @RequestHeader("Token") token: String): ResponseEntity<HttpStatus> {
         if (isTeacher(token)) {
             val teacher = JwtUtils.getUserFromToken(token)
@@ -50,11 +50,12 @@ class ClassSessionController : BaseController() {
 
     @CrossOrigin
     @GetMapping("/{id}")
-    fun getClassSession(@PathVariable id: Long, @RequestHeader("Token") token: String): ResponseEntity<Any> {
+    fun getClassSession(@PathVariable id: Long, @RequestHeader("Token") token: String, @RequestParam simple: Boolean): ResponseEntity<Any> {
         val user = JwtUtils.getUserFromToken(token)
         val classSession = classSessionRepository.getOne(id)
-        if (classSession.teacher == user.id || classSession.students.contains(user)){
-            return ResponseEntity(classSession, OK)
+        if (classSession.teacher == user.id || classSession.students.contains(user)) {
+            return if (simple) ResponseEntity(classSession.simple(), OK)
+            else ResponseEntity(classSession, OK)
         } else return ResponseEntity(UNAUTHORIZED)
     }
 

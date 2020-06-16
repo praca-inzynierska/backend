@@ -21,12 +21,32 @@ data class ClassSession(
     fun addTaskSession(taskSession: TaskSession) {
         taskSessions.add(taskSession)
     }
+
+    fun simple(): ClassSessionSimpleResponse {
+        return ClassSessionSimpleResponse(
+                this.students.map { it.id }.toMutableList(),
+                this.teacher,
+                this.taskSessions.map { it.id }.toMutableList(),
+                this.startDate,
+                this.endDate,
+                this.id
+        )
+    }
 }
 
 data class ClassSessionRequest(
         var students: MutableList<Long>,
         var startDate: Long,
         var endDate: Long
+)
+
+data class ClassSessionSimpleResponse(
+        val students: MutableList<Long>,
+        val teacher: Long,
+        val taskSessions: MutableList<Long>,
+        val startDate: Long,
+        val endDate: Long,
+        val id: Long
 )
 
 object ClassSessionSpecifications {
