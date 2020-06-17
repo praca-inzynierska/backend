@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository
 @Repository
 interface TaskRepository : JpaRepository<Task, Long> {
     fun getTasksByTeacher(teacherId: Long): List<Task> {
-        return this.findAll().filter { task -> task.teacher == teacherId }
+        return this.findAll().filter { task -> task.teacher!!.user.id == teacherId }
     }
 }

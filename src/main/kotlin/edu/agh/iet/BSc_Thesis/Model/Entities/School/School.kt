@@ -4,7 +4,7 @@ import org.springframework.data.jpa.domain.Specification
 import javax.persistence.*
 
 @Entity
-@Table("school")
+@Table(name = "school")
 data class School(
 
         val name: String,
@@ -20,7 +20,7 @@ data class SchoolRequest(
 )
 
 @Entity
-@Table("schoolClass")
+@Table(name = "schoolClass")
 data class SchoolClass(
         @Id
         @GeneratedValue(strategy = GenerationType.AUTO)

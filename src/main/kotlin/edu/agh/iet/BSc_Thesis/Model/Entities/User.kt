@@ -1,31 +1,16 @@
 package edu.agh.iet.BSc_Thesis.Model.Entities
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.io.Serializable
-import javax.persistence.*;
+import javax.persistence.*
 
 @Entity
 @Table(name = "user")
-@JsonIgnoreProperties("username", "password")
 data class User(
-        @Id @GeneratedValue(strategy = GenerationType.AUTO)
-        var id: Long = -1,
         @Column(unique = true)
         var username: String = "",
         var firstName: String = "",
         var lastName: String = "",
         var password: String = "",
-        var isTeacher: Boolean = false
-) : Serializable {
-    constructor(username: String,
-                password: String,
-                firstName: String,
-                lastName: String,
-                isTeacher: Boolean = false)
-            : this(id = -1,
-            username = username,
-            password = password,
-            firstName = firstName,
-            lastName = lastName,
-            isTeacher = isTeacher)
-}
+        @Id @GeneratedValue(strategy = GenerationType.AUTO)
+        var id: Long = -1
+) : Serializable

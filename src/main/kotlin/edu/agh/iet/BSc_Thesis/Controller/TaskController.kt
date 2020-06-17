@@ -2,6 +2,7 @@ package edu.agh.iet.BSc_Thesis.Controller
 
 import edu.agh.iet.BSc_Thesis.Model.Entities.Task
 import edu.agh.iet.BSc_Thesis.Repositories.TaskRepository
+import edu.agh.iet.BSc_Thesis.Repositories.TeacherRepository
 import edu.agh.iet.BSc_Thesis.Repositories.UserRepository
 import edu.agh.iet.BSc_Thesis.Util.JwtUtils.getClaimsFromToken
 import edu.agh.iet.BSc_Thesis.Util.JwtUtils.getUsername
@@ -22,11 +23,15 @@ class TaskController : BaseController() {
     @Autowired
     lateinit var userRepository: UserRepository
 
+    @Autowired
+    lateinit var teacherRepository: TeacherRepository
+
     @CrossOrigin
     @PostMapping("/create")
     fun addTask(@RequestBody task: Task, @RequestHeader("Token") token: String): String {
         val user = userRepository.getUserByUsername(getClaimsFromToken(token).getUsername())!!
-        task.teacher = user.id
+        val teacher = teacherRepository.getTeacherByUser_Username(user.username)
+        task.teacher = teacher
         taskRepository.save(task)
         return "success"
     }
@@ -36,7 +41,8 @@ class TaskController : BaseController() {
     fun addTask(@PathVariable id: Long, @RequestBody task: Task, @RequestHeader("Token") token: String): String {
         task.id = id
         val user = userRepository.getUserByUsername(getClaimsFromToken(token).getUsername())!!
-        task.teacher = user.id
+        val teacher = teacherRepository.getTeacherByUser_Username(user.username)
+        task.teacher = teacher
         taskRepository.save(task)
         return "success"
     }

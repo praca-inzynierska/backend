@@ -1,12 +1,12 @@
 package edu.agh.iet.BSc_Thesis.Util
 
 import edu.agh.iet.BSc_Thesis.Model.Entities.User
+import edu.agh.iet.BSc_Thesis.Repositories.TeacherRepository
 import edu.agh.iet.BSc_Thesis.Repositories.UserRepository
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.util.*
 
@@ -17,6 +17,9 @@ object JwtUtils {
 
     @Autowired
     lateinit var userRepository: UserRepository
+
+    @Autowired
+    lateinit var teacherRepository: TeacherRepository
 
     fun generateToken(userDetails: User): String {
         val claims: Map<String, Any> = HashMap()
@@ -51,7 +54,7 @@ object JwtUtils {
 
     fun isTeacher(token: String): Boolean {
         val username = getClaimsFromToken(token).getUsername()
-        val user = userRepository.getUserByUsername(username)
-        return (user != null && user.isTeacher)
+        val teacher = teacherRepository.getTeacherByUser_Username(username)
+        return (teacher != null)
     }
 }

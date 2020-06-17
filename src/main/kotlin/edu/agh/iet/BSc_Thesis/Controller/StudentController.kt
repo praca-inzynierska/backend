@@ -2,8 +2,6 @@ package edu.agh.iet.BSc_Thesis.Controller
 
 import edu.agh.iet.BSc_Thesis.Model.Entities.School.Student
 import edu.agh.iet.BSc_Thesis.Model.Entities.School.StudentRequest
-import edu.agh.iet.BSc_Thesis.Model.Entities.Student.Student
-import edu.agh.iet.BSc_Thesis.Model.Entities.Student.StudentRequest
 import edu.agh.iet.BSc_Thesis.Model.Entities.User
 import edu.agh.iet.BSc_Thesis.Repositories.StudentRepository
 import edu.agh.iet.BSc_Thesis.Repositories.UserRepository
