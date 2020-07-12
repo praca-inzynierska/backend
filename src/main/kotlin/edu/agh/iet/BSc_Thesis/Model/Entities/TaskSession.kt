@@ -8,7 +8,8 @@ data class TaskSession(
 
         @Id @GeneratedValue(strategy = GenerationType.AUTO)
         var id: Long = -1,
-        var task: Long = -1,
+        @ManyToOne
+        var task: Task? = null,
         var classSession: Long = -1,
         @OneToMany                  //TODO change to oneToMany
         var students: MutableList<User>,

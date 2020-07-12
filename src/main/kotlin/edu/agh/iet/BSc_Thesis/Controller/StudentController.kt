@@ -22,7 +22,7 @@ class StudentController : BaseController() {
     @PostMapping("/create")
     fun addStudent(@RequestBody studentRequest: StudentRequest, @RequestHeader("Token") token: String): ResponseEntity<Any> {
         if (JwtUtils.isTeacher(token)) {
-            val user: User = userRepository.getOne(studentRequest.id)
+            val user: User = userRepository.getOne(studentRequest.userId)
             val student: Student = Student(user, mutableListOf())
             studentRepository.save(student)
             return ResponseEntity(student, HttpStatus.OK)

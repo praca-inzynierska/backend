@@ -1,14 +1,19 @@
 package edu.agh.iet.BSc_Thesis.Controller
 
 import edu.agh.iet.BSc_Thesis.Model.Entities.Task
+import edu.agh.iet.BSc_Thesis.Model.Entities.TaskRequest
 import edu.agh.iet.BSc_Thesis.Repositories.TaskRepository
 import edu.agh.iet.BSc_Thesis.Repositories.TeacherRepository
+import edu.agh.iet.BSc_Thesis.Repositories.ToolRepository
 import edu.agh.iet.BSc_Thesis.Repositories.UserRepository
 import edu.agh.iet.BSc_Thesis.Util.JwtUtils.getClaimsFromToken
 import edu.agh.iet.BSc_Thesis.Util.JwtUtils.getUsername
 import edu.agh.iet.BSc_Thesis.Util.JwtUtils.validateToken
 import io.jsonwebtoken.Claims
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.*
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletResponse
 
@@ -26,25 +31,52 @@ class TaskController : BaseController() {
     @Autowired
     lateinit var teacherRepository: TeacherRepository
 
+    @Autowired
+    lateinit var toolRepository: ToolRepository
+
     @CrossOrigin
     @PostMapping("/create")
-    fun addTask(@RequestBody task: Task, @RequestHeader("Token") token: String): String {
+    fun addTask(@RequestBody task: TaskRequest, @RequestHeader("Token") token: String): ResponseEntity<Any> {
         val user = userRepository.getUserByUsername(getClaimsFromToken(token).getUsername())!!
         val teacher = teacherRepository.getTeacherByUser_Username(user.username)
-        task.teacher = teacher
-        taskRepository.save(task)
-        return "success"
+        val tools = toolRepository.findAllById(task.tools.map { it.toLong() })
+        val taskToSave = Task(
+                teacher,
+                task.name,
+                task.subject,
+                task.description,
+                tools,
+                task.minutes,
+                task.type
+        )
+        task.teacher = teacher!!.id
+        taskRepository.save(taskToSave)
+        return ResponseEntity(CREATED)
     }
 
     @CrossOrigin
     @PostMapping("/{id}")
-    fun addTask(@PathVariable id: Long, @RequestBody task: Task, @RequestHeader("Token") token: String): String {
-        task.id = id
+    fun editTask(
+            @PathVariable id: Long,
+            @RequestBody task: TaskRequest,
+            @RequestHeader("Token") token: String)
+            : ResponseEntity<Any> {
         val user = userRepository.getUserByUsername(getClaimsFromToken(token).getUsername())!!
         val teacher = teacherRepository.getTeacherByUser_Username(user.username)
-        task.teacher = teacher
-        taskRepository.save(task)
-        return "success"
+        val editedTask = taskRepository.getOne(id)
+        if (editedTask.teacher == teacher) {
+            val newTools = toolRepository.findAllById(task.tools.map { it.toLong() })
+            val newTeacher = teacherRepository.getOne(task.teacher)
+            editedTask.description = task.description
+            editedTask.minutes = task.minutes
+            editedTask.name = task.name
+            editedTask.subject = task.subject
+            editedTask.teacher = newTeacher
+            editedTask.tools = newTools
+            editedTask.type = task.type
+            taskRepository.save(editedTask)
+            return ResponseEntity(OK)
+        } else return ResponseEntity(UNAUTHORIZED)
     }
 
     @CrossOrigin

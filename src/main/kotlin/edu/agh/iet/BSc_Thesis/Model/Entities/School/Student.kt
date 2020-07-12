@@ -17,5 +17,5 @@ data class Student(
 ) : Serializable
 
 data class StudentRequest(
-        val id: Long
+        val userId: Long
 )

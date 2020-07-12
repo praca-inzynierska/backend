@@ -1,5 +1,6 @@
 package edu.agh.iet.BSc_Thesis.Model.Entities
 
+import edu.agh.iet.BSc_Thesis.Model.Entities.School.Teacher
 import org.springframework.data.jpa.domain.Specification
 import javax.persistence.*
 
@@ -10,7 +11,8 @@ data class ClassSession(
 
         @OneToMany
         var students: MutableList<User>,
-        var teacher: Long,
+        @ManyToOne
+        var teacher: Teacher,
         @OneToMany
         var taskSessions: MutableList<TaskSession> = mutableListOf(),
         var startDate: Long,
@@ -25,7 +27,7 @@ data class ClassSession(
     fun simple(): ClassSessionSimpleResponse {
         return ClassSessionSimpleResponse(
                 this.students.map { it.id }.toMutableList(),
-                this.teacher,
+                this.teacher.id,
                 this.taskSessions.map { it.id }.toMutableList(),
                 this.startDate,
                 this.endDate,
