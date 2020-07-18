@@ -6,7 +6,7 @@ import javax.persistence.*
 
 
 @Entity
-@Table(name = "classSession")
+@Table(name = "class_session")
 data class ClassSession(
 
         @OneToMany

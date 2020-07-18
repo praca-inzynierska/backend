@@ -30,7 +30,7 @@ class UserController : BaseController() {
     @PostMapping("/register")
     fun register(@RequestBody registerRequest: RegisterRequest): LoginResponse {
         val userToCreate: User = registerRequest.userFromRequest()
-        userRepository.save(userToCreate)
+//        userRepository.save(userToCreate)
         if (registerRequest.isTeacher) {
             val teacherToCreate = Teacher(userToCreate, mutableListOf())
             teacherRepository.save(teacherToCreate)
@@ -85,6 +85,6 @@ data class RegisterRequest(
         var isTeacher: Boolean
 ) {
     fun userFromRequest(): User {
-        return User(username, password, firstName, lastName)
+        return User(username, firstName, lastName, password)
     }
 }

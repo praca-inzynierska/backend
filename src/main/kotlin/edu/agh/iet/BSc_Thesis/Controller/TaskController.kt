@@ -8,14 +8,11 @@ import edu.agh.iet.BSc_Thesis.Repositories.ToolRepository
 import edu.agh.iet.BSc_Thesis.Repositories.UserRepository
 import edu.agh.iet.BSc_Thesis.Util.JwtUtils.getClaimsFromToken
 import edu.agh.iet.BSc_Thesis.Util.JwtUtils.getUsername
-import edu.agh.iet.BSc_Thesis.Util.JwtUtils.validateToken
-import io.jsonwebtoken.Claims
+import edu.agh.iet.BSc_Thesis.Util.JwtUtils.isTeacher
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.*
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import javax.servlet.http.HttpServletResponse
 
 
 @RestController
@@ -39,7 +36,7 @@ class TaskController : BaseController() {
     fun addTask(@RequestBody task: TaskRequest, @RequestHeader("Token") token: String): ResponseEntity<Any> {
         val user = userRepository.getUserByUsername(getClaimsFromToken(token).getUsername())!!
         val teacher = teacherRepository.getTeacherByUser_Username(user.username)
-        val tools = toolRepository.findAllById(task.tools.map { it.toLong() })
+        val tools = toolRepository.findAllById(task.tools)
         val taskToSave = Task(
                 teacher,
                 task.name,
@@ -65,7 +62,7 @@ class TaskController : BaseController() {
         val teacher = teacherRepository.getTeacherByUser_Username(user.username)
         val editedTask = taskRepository.getOne(id)
         if (editedTask.teacher == teacher) {
-            val newTools = toolRepository.findAllById(task.tools.map { it.toLong() })
+            val newTools = toolRepository.findAllById(task.tools)
             val newTeacher = teacherRepository.getOne(task.teacher)
             editedTask.description = task.description
             editedTask.minutes = task.minutes
@@ -89,6 +86,7 @@ class TaskController : BaseController() {
     @GetMapping("")
     fun getTasks(@RequestHeader("Token") token: String): List<Task> {
         val user = userRepository.getUserByUsername(getClaimsFromToken(token).getUsername())!!
-        return taskRepository.getTasksByTeacher(user.id)
+        val teacher = teacherRepository.getTeacherByUser_Username(user.username)!!
+        return taskRepository.getTasksByTeacher_Id(teacher.id)
     }
 }

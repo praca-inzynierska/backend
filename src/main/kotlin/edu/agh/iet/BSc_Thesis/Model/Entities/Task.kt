@@ -1,5 +1,8 @@
 package edu.agh.iet.BSc_Thesis.Model.Entities
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo
+import com.fasterxml.jackson.annotation.JsonIdentityReference
+import com.fasterxml.jackson.annotation.ObjectIdGenerators
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import edu.agh.iet.BSc_Thesis.Model.Entities.School.Teacher
 import javax.persistence.*
