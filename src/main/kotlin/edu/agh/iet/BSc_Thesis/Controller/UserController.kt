@@ -23,9 +23,6 @@ class UserController : BaseController() {
     @Autowired
     lateinit var studentRepository: StudentRepository
 
-    @Autowired
-    lateinit var teacherRepository: TeacherRepository
-
     @CrossOrigin
     @PostMapping("/register")
     fun register(@RequestBody registerRequest: RegisterRequest): LoginResponse {

@@ -1,9 +1,8 @@
 package edu.agh.iet.BSc_Thesis.Model.Entities.School
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo
-import com.fasterxml.jackson.annotation.JsonIdentityReference
-import com.fasterxml.jackson.annotation.ObjectIdGenerators
+import edu.agh.iet.BSc_Thesis.Controller.UserInfoResponse
 import edu.agh.iet.BSc_Thesis.Model.Entities.User
+import edu.agh.iet.BSc_Thesis.Model.Entities.UserResponse
 import java.io.Serializable
 import javax.persistence.*
 
@@ -16,4 +15,12 @@ data class Teacher(
         val subjects: MutableList<String>,
         @Id @GeneratedValue(strategy = GenerationType.AUTO)
         val id: Long = -1
-) : Serializable
+) : Serializable {
+        fun simple(): TeacherSimpleResponse{
+                return TeacherSimpleResponse(user.toUserResponse())
+        }
+}
+
+data class TeacherSimpleResponse(
+        val user: UserResponse
+)

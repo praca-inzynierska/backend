@@ -13,14 +13,28 @@ data class School(
         @Id
         @GeneratedValue(strategy = GenerationType.AUTO)
         val id: Long = -1
-)
+) {
+    fun response(): SchoolResponse {
+        return SchoolResponse(
+                this.name,
+                this.classes.map { it.response() }.toMutableList(),
+                this.id
+        )
+    }
+}
 
 data class SchoolRequest(
         val name: String
 )
 
+data class SchoolResponse(
+        val name: String,
+        val classes: MutableList<SchoolClassResponse>,
+        val id: Long
+)
+
 @Entity
-@Table(name = "schoolClass")
+@Table(name = "school_class")
 data class SchoolClass(
         @Id
         @GeneratedValue(strategy = GenerationType.AUTO)
@@ -28,6 +42,20 @@ data class SchoolClass(
         val classNumber: Long,
         @OneToMany(targetEntity = Student::class)
         val students: MutableList<Student>
+) {
+    fun response(): SchoolClassResponse {
+        return SchoolClassResponse(
+                id,
+                classNumber,
+                students.map { it.response() }.toMutableList()
+        )
+    }
+}
+
+data class SchoolClassResponse(
+        val id: Long,
+        val classNumber: Long,
+        val students: MutableList<StudentResponse>
 )
 
 object SchoolSpecifications {

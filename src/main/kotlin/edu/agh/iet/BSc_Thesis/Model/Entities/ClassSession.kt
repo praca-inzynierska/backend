@@ -1,6 +1,8 @@
 package edu.agh.iet.BSc_Thesis.Model.Entities
 
+import edu.agh.iet.BSc_Thesis.Model.Entities.School.Student
 import edu.agh.iet.BSc_Thesis.Model.Entities.School.Teacher
+import edu.agh.iet.BSc_Thesis.Model.Entities.School.TeacherSimpleResponse
 import org.springframework.data.jpa.domain.Specification
 import javax.persistence.*
 
@@ -10,7 +12,7 @@ import javax.persistence.*
 data class ClassSession(
 
         @OneToMany
-        var students: MutableList<User>,
+        var students: MutableList<Student>,
         @ManyToOne
         var teacher: Teacher,
         @OneToMany
@@ -34,12 +36,32 @@ data class ClassSession(
                 this.id
         )
     }
+
+    fun response(): ClassSessionResponse {
+        return ClassSessionResponse(
+                this.students,
+                this.teacher.simple(),
+                this.taskSessions,
+                this.startDate,
+                this.endDate,
+                this.id
+        )
+    }
 }
 
 data class ClassSessionRequest(
         var students: MutableList<Long>,
         var startDate: Long,
         var endDate: Long
+)
+
+data class ClassSessionResponse(
+        val students: MutableList<Student>,
+        val teacher: TeacherSimpleResponse,
+        val taskSessions: MutableList<TaskSession>,
+        val startDate: Long,
+        val endDate: Long,
+        val id: Long
 )
 
 data class ClassSessionSimpleResponse(
@@ -50,14 +72,3 @@ data class ClassSessionSimpleResponse(
         val endDate: Long,
         val id: Long
 )
-
-object ClassSessionSpecifications {
-    fun hasParticipantOfId(id: Long): Specification<ClassSession> {
-        return Specification { root, _, criteriaBuilder ->
-            criteriaBuilder.or(
-                    criteriaBuilder.isMember(id, root.get("students")),
-                    criteriaBuilder.equal(root.get<Long>("teacher"), id)
-            )
-        }
-    }
-}

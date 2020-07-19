@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.stereotype.Repository
 
 @Repository
-interface TeacherRepository : JpaRepository<Teacher, Long>, JpaSpecificationExecutor<Teacher> {
+interface TeacherRepository : JpaRepository<Teacher, Long> {
     fun getTeacherByUser_Username(username: String): Teacher?
 }

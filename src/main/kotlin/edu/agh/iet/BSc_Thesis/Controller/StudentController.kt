@@ -23,32 +23,32 @@ class StudentController : BaseController() {
     fun addStudent(@RequestBody studentRequest: StudentRequest, @RequestHeader("Token") token: String): ResponseEntity<Any> {
         if (JwtUtils.isTeacher(token)) {
             val user: User = userRepository.getOne(studentRequest.userId)
-            val student: Student = Student(user, mutableListOf())
+            val student = Student(user, mutableListOf())
             studentRepository.save(student)
-            return ResponseEntity(student, HttpStatus.OK)
+            return ResponseEntity(student.response(), HttpStatus.OK)
         } else return ResponseEntity(HttpStatus.UNAUTHORIZED)
     }
 
     @CrossOrigin
     @PostMapping("/edit/{id}")
-    fun editStudent(@PathVariable id: Long, @RequestBody newStudent: Student, @RequestHeader("Token") token: String): ResponseEntity<HttpStatus> {
+    fun editStudent(@PathVariable id: Long, @RequestBody newStudent: Student, @RequestHeader("Token") token: String): ResponseEntity<Any> {
         if (JwtUtils.isTeacher(token)) {
             studentRepository.save(newStudent)
-            return ResponseEntity(HttpStatus.OK)
+            return ResponseEntity(newStudent.response(), HttpStatus.OK)
         } else return ResponseEntity(HttpStatus.UNAUTHORIZED)
     }
 
     @CrossOrigin
     @GetMapping("/{id}")
     fun getStudent(@PathVariable id: Long, @RequestHeader("Token") token: String, @RequestParam simple: Boolean): ResponseEntity<Any> {
-        return ResponseEntity(studentRepository.getOne(id), HttpStatus.OK)
+        return ResponseEntity(studentRepository.getOne(id).response(), HttpStatus.OK)
     }
 
     @CrossOrigin
     @GetMapping("")
     fun getStudents(@RequestHeader("Token") token: String): ResponseEntity<Any> {
         if (JwtUtils.isTeacher(token)) {
-            return ResponseEntity(studentRepository.findAll(), HttpStatus.OK)
+            return ResponseEntity(studentRepository.findAll().map { it.response() }, HttpStatus.OK)
         } else return ResponseEntity(HttpStatus.UNAUTHORIZED)
     }
 }

@@ -1,8 +1,7 @@
 package edu.agh.iet.BSc_Thesis.Controller
 
 import edu.agh.iet.BSc_Thesis.Model.Entities.*
-import edu.agh.iet.BSc_Thesis.Repositories.TaskSessionRepository
-import edu.agh.iet.BSc_Thesis.Repositories.UserRepository
+import edu.agh.iet.BSc_Thesis.Repositories.*
 import edu.agh.iet.BSc_Thesis.Util.JwtUtils
 import edu.agh.iet.BSc_Thesis.Util.JwtUtils.getUsername
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,42 +17,55 @@ class TaskSessionController : BaseController() {
     lateinit var taskSessionRepository: TaskSessionRepository
 
     @Autowired
-    lateinit var userRepository: UserRepository
+    lateinit var classSessionRepository: ClassSessionRepository
+
+    @Autowired
+    lateinit var taskRepository: TaskRepository
+
+    @Autowired
+    lateinit var studentRepository: StudentRepository
 
 
     @CrossOrigin
     @PostMapping("/create")
-    fun addClassSession(@RequestBody taskSessionRequest: TaskSession, @RequestHeader("Token") token: String): ResponseEntity<Any> {
+    fun addTaskSession(@RequestBody taskSessionRequest: TaskSessionRequest, @RequestHeader("Token") token: String): ResponseEntity<Any> {
         return if (JwtUtils.isTeacher(token)) {
-            val user = JwtUtils.getUserFromToken(token)
-            taskSessionRepository.save(taskSessionRequest)
-            ResponseEntity(taskSessionRequest, HttpStatus.CREATED)
+            val task = taskRepository.getOne(taskSessionRequest.taskId)
+            val classSession = classSessionRepository.getOne(taskSessionRequest.classSessionId)
+            val students = studentRepository.getAllByIdIn(taskSessionRequest.studentIds).toMutableList()
+            val taskSession = TaskSession(
+                    task,
+                    classSession,
+                    students,
+                    -1,
+                    needsHelp = false,
+                    readyToRate = false
+                    )
+            taskSessionRepository.save(taskSession)
+            ResponseEntity(taskSession.response(), HttpStatus.CREATED)
         } else ResponseEntity(HttpStatus.UNAUTHORIZED)
     }
 
     @CrossOrigin
     @PostMapping("/{id}")
-    fun editTaskSession(@PathVariable id: Long, @RequestBody newTaskSession: TaskSession, @RequestHeader("Token") token: String): ResponseEntity<HttpStatus> {
+    fun editTaskSession(@PathVariable id: Long, @RequestBody newTaskSession: TaskSession, @RequestHeader("Token") token: String): ResponseEntity<Any> {
         return if (JwtUtils.isTeacher(token)) {
-            val teacher = JwtUtils.getUserFromToken(token)
             taskSessionRepository.save(newTaskSession)
-            ResponseEntity(HttpStatus.OK)
+            ResponseEntity(newTaskSession.response(), HttpStatus.OK)
         } else ResponseEntity(HttpStatus.UNAUTHORIZED)
     }
 
     @CrossOrigin
     @GetMapping("/{id}")
-    fun getClassSession(@PathVariable id: Long, @RequestHeader("Token") token: String): ResponseEntity<Any> {
-        val user = JwtUtils.getUserFromToken(token)
+    fun getTaskSession(@PathVariable id: Long, @RequestHeader("Token") token: String): ResponseEntity<Any> {
         val taskSession = taskSessionRepository.getOne(id)
-        return ResponseEntity(taskSession, HttpStatus.OK)
+        return ResponseEntity(taskSession.response(), HttpStatus.OK)
     }
 
     @CrossOrigin
     @GetMapping("")
-    fun getClassSessions(@RequestHeader("Token") token: String): List<TaskSession> {
-        val user = JwtUtils.getUserFromToken(token)
-        return taskSessionRepository.findAll()
+    fun getTaskSessions(@RequestHeader("Token") token: String): ResponseEntity<List<TaskSessionResponse>> {
+        return ResponseEntity(taskSessionRepository.findAll().map { it.response() }, HttpStatus.OK)
     }
 
 }

@@ -13,4 +13,18 @@ data class User(
         var password: String = "",
         @Id @GeneratedValue(strategy = GenerationType.AUTO)
         var id: Long = -1
-) : Serializable
+) : Serializable {
+        fun toUserResponse(): UserResponse {
+                return UserResponse(
+                        this.firstName,
+                        this.lastName,
+                        this.id
+                )
+        }
+}
+
+data class UserResponse(
+        var firstName: String,
+        var lastName: String,
+        var id: Long
+)
