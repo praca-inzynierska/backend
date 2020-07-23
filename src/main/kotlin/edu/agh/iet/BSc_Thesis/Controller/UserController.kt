@@ -1,7 +1,11 @@
 package edu.agh.iet.BSc_Thesis.Controller
 
 import edu.agh.iet.BSc_Thesis.Controller.UserInfoResponse.Companion.toUserInfoResponse
+import edu.agh.iet.BSc_Thesis.Model.Entities.School.Student
+import edu.agh.iet.BSc_Thesis.Model.Entities.School.Teacher
 import edu.agh.iet.BSc_Thesis.Model.Entities.User
+import edu.agh.iet.BSc_Thesis.Repositories.StudentRepository
+import edu.agh.iet.BSc_Thesis.Repositories.TeacherRepository
 import edu.agh.iet.BSc_Thesis.Repositories.UserRepository
 import edu.agh.iet.BSc_Thesis.Util.JwtUtils
 import edu.agh.iet.BSc_Thesis.Util.JwtUtils.generateToken
@@ -16,11 +20,21 @@ class UserController : BaseController() {
     @Autowired
     lateinit var userRepository: UserRepository
 
+    @Autowired
+    lateinit var studentRepository: StudentRepository
+
     @CrossOrigin
     @PostMapping("/register")
     fun register(@RequestBody registerRequest: RegisterRequest): LoginResponse {
         val userToCreate: User = registerRequest.userFromRequest()
-        userRepository.save(userToCreate)
+//        userRepository.save(userToCreate)
+        if (registerRequest.isTeacher) {
+            val teacherToCreate = Teacher(userToCreate, mutableListOf())
+            teacherRepository.save(teacherToCreate)
+        } else {
+            val studentToCreate = Student(userToCreate, mutableListOf())
+            studentRepository.save(studentToCreate)
+        }
         return LoginResponse(generateToken(userToCreate), userToCreate.username)
     }
 
@@ -46,12 +60,11 @@ data class LoginResponse(
 )
 
 data class UserInfoResponse(
-        var username: String,
-        var isTeacher: Boolean
+        var username: String
 ) {
     companion object {
         fun User.toUserInfoResponse(): UserInfoResponse {
-            return UserInfoResponse(this.username, this.isTeacher)
+            return UserInfoResponse(this.username)
         }
     }
 }
@@ -69,6 +82,6 @@ data class RegisterRequest(
         var isTeacher: Boolean
 ) {
     fun userFromRequest(): User {
-        return User(username, password, firstName, lastName, isTeacher)
+        return User(username, firstName, lastName, password)
     }
 }

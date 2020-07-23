@@ -1,16 +1,20 @@
 package edu.agh.iet.BSc_Thesis.Model.Entities
 
+import edu.agh.iet.BSc_Thesis.Model.Entities.School.Student
+import edu.agh.iet.BSc_Thesis.Model.Entities.School.Teacher
+import edu.agh.iet.BSc_Thesis.Model.Entities.School.TeacherSimpleResponse
 import org.springframework.data.jpa.domain.Specification
 import javax.persistence.*
 
 
 @Entity
-@Table(name = "classSession")
+@Table(name = "class_session")
 data class ClassSession(
 
         @OneToMany
-        var students: MutableList<User>,
-        var teacher: Long,
+        var students: MutableList<Student>,
+        @ManyToOne
+        var teacher: Teacher,
         @OneToMany
         var taskSessions: MutableList<TaskSession> = mutableListOf(),
         var startDate: Long,
@@ -21,6 +25,28 @@ data class ClassSession(
     fun addTaskSession(taskSession: TaskSession) {
         taskSessions.add(taskSession)
     }
+
+    fun simple(): ClassSessionSimpleResponse {
+        return ClassSessionSimpleResponse(
+                this.students.map { it.id }.toMutableList(),
+                this.teacher.id,
+                this.taskSessions.map { it.id }.toMutableList(),
+                this.startDate,
+                this.endDate,
+                this.id
+        )
+    }
+
+    fun response(): ClassSessionResponse {
+        return ClassSessionResponse(
+                this.students,
+                this.teacher.simple(),
+                this.taskSessions,
+                this.startDate,
+                this.endDate,
+                this.id
+        )
+    }
 }
 
 data class ClassSessionRequest(
@@ -29,13 +55,20 @@ data class ClassSessionRequest(
         var endDate: Long
 )
 
-object ClassSessionSpecifications {
-    fun hasParticipantOfId(id: Long): Specification<ClassSession> {
-        return Specification { root, _, criteriaBuilder ->
-            criteriaBuilder.or(
-                    criteriaBuilder.isMember(id, root.get("students")),
-                    criteriaBuilder.equal(root.get<Long>("teacher"), id)
-            )
-        }
-    }
-}
+data class ClassSessionResponse(
+        val students: MutableList<Student>,
+        val teacher: TeacherSimpleResponse,
+        val taskSessions: MutableList<TaskSession>,
+        val startDate: Long,
+        val endDate: Long,
+        val id: Long
+)
+
+data class ClassSessionSimpleResponse(
+        val students: MutableList<Long>,
+        val teacher: Long,
+        val taskSessions: MutableList<Long>,
+        val startDate: Long,
+        val endDate: Long,
+        val id: Long
+)
