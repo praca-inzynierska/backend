@@ -19,7 +19,7 @@ class AuthInterceptor : HandlerInterceptorAdapter() {
         val reqUri = request.requestURI
         val serviceName = reqUri.substring(reqUri.lastIndexOf("/") + 1,
                 reqUri.length)
-        return if (!listOf("login", "register").contains(serviceName) && request.method != "OPTIONS") {
+        return if (!listOf("login", "register", "mock").contains(serviceName) && request.method != "OPTIONS") {
             val token = request.getHeader("Token")
             JwtUtils.validateToken(token)
         } else true

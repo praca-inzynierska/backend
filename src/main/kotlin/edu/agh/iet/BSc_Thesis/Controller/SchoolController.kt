@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/school")
 class SchoolController : BaseController() {
-    @Autowired
-    lateinit var schoolRepository: SchoolRepository
 
     @CrossOrigin
     @PostMapping("/create")

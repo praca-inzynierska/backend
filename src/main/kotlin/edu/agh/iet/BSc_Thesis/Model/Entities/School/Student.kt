@@ -9,7 +9,7 @@ import javax.persistence.*
 @Table(name = "student")
 data class Student(
 
-        @OneToOne
+        @OneToOne(cascade = [CascadeType.ALL])
         val user: User,
         @ElementCollection
         val grades: MutableList<Long>,

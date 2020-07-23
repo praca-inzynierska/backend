@@ -17,12 +17,6 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("")
 class UserController : BaseController() {
 
-    @Autowired
-    lateinit var userRepository: UserRepository
-
-    @Autowired
-    lateinit var studentRepository: StudentRepository
-
     @CrossOrigin
     @PostMapping("/register")
     fun register(@RequestBody registerRequest: RegisterRequest): LoginResponse {

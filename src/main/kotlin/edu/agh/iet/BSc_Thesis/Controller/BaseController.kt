@@ -1,6 +1,6 @@
 package edu.agh.iet.BSc_Thesis.Controller
 
-import edu.agh.iet.BSc_Thesis.Repositories.TeacherRepository
+import edu.agh.iet.BSc_Thesis.Repositories.*
 import edu.agh.iet.BSc_Thesis.Util.JwtUtils
 import edu.agh.iet.BSc_Thesis.Util.JwtUtils.getUsername
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,6 +13,24 @@ open class BaseController {
 
     @Autowired
     lateinit var teacherRepository: TeacherRepository
+
+    @Autowired
+    lateinit var classSessionRepository: ClassSessionRepository
+
+    @Autowired
+    lateinit var studentRepository: StudentRepository
+
+    @Autowired
+    lateinit var schoolRepository: SchoolRepository
+
+    @Autowired
+    lateinit var userRepository: UserRepository
+
+    @Autowired
+    lateinit var taskRepository: TaskRepository
+
+    @Autowired
+    lateinit var taskSessionRepository: TaskSessionRepository
 
     @CrossOrigin
     @RequestMapping(value = ["/**"], method = [RequestMethod.OPTIONS])

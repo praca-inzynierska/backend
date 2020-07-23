@@ -12,11 +12,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 class StudentController : BaseController() {
-    @Autowired
-    lateinit var studentRepository: StudentRepository
-
-    @Autowired
-    lateinit var userRepository: UserRepository
 
     @CrossOrigin
     @PostMapping("/create")

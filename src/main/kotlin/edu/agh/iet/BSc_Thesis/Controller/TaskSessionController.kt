@@ -13,19 +13,6 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/taskSessions")
 class TaskSessionController : BaseController() {
 
-    @Autowired
-    lateinit var taskSessionRepository: TaskSessionRepository
-
-    @Autowired
-    lateinit var classSessionRepository: ClassSessionRepository
-
-    @Autowired
-    lateinit var taskRepository: TaskRepository
-
-    @Autowired
-    lateinit var studentRepository: StudentRepository
-
-
     @CrossOrigin
     @PostMapping("/create")
     fun addTaskSession(@RequestBody taskSessionRequest: TaskSessionRequest, @RequestHeader("Token") token: String): ResponseEntity<Any> {
@@ -35,13 +22,13 @@ class TaskSessionController : BaseController() {
             val students = studentRepository.getAllByIdIn(taskSessionRequest.studentIds).toMutableList()
             val taskSession = TaskSession(
                     task,
-                    classSession,
                     students,
                     -1,
                     needsHelp = false,
                     readyToRate = false
                     )
-            taskSessionRepository.save(taskSession)
+            classSession.addTaskSession(taskSession)
+            classSessionRepository.save(classSession)
             ResponseEntity(taskSession.response(), HttpStatus.CREATED)
         } else ResponseEntity(HttpStatus.UNAUTHORIZED)
     }

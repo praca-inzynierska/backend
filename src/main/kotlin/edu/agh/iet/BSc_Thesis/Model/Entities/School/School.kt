@@ -8,7 +8,7 @@ import javax.persistence.*
 data class School(
 
         val name: String,
-        @OneToMany(targetEntity = SchoolClass::class)
+        @OneToMany(targetEntity = SchoolClass::class, cascade = [CascadeType.ALL])
         val classes: MutableList<SchoolClass>,
         @Id
         @GeneratedValue(strategy = GenerationType.AUTO)
@@ -36,12 +36,12 @@ data class SchoolResponse(
 @Entity
 @Table(name = "school_class")
 data class SchoolClass(
-        @Id
-        @GeneratedValue(strategy = GenerationType.AUTO)
-        val id: Long,
         val classNumber: Long,
         @OneToMany(targetEntity = Student::class)
-        val students: MutableList<Student>
+        val students: MutableList<Student>,
+        @Id
+        @GeneratedValue(strategy = GenerationType.AUTO)
+        val id: Long = -1
 ) {
     fun response(): SchoolClassResponse {
         return SchoolClassResponse(

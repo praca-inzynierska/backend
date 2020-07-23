@@ -16,13 +16,6 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/tasks")
 class TaskController : BaseController() {
 
-    @Autowired
-    lateinit var taskRepository: TaskRepository
-
-    @Autowired
-    lateinit var userRepository: UserRepository
-
-
     @CrossOrigin
     @PostMapping("/create")
     fun addTask(@RequestBody task: TaskRequest, @RequestHeader("Token") token: String): ResponseEntity<Any> {
