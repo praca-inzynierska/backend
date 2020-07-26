@@ -1,6 +1,7 @@
 package edu.agh.iet.BSc_Thesis.Model.Entities
 
 import edu.agh.iet.BSc_Thesis.Model.Entities.School.Student
+import edu.agh.iet.BSc_Thesis.Model.Entities.School.StudentResponse
 import edu.agh.iet.BSc_Thesis.Model.Entities.School.Teacher
 import edu.agh.iet.BSc_Thesis.Model.Entities.School.TeacherSimpleResponse
 import org.springframework.data.jpa.domain.Specification
@@ -13,9 +14,9 @@ data class ClassSession(
 
         @OneToMany
         var students: MutableList<Student>,
-        @ManyToOne
+        @OneToOne
         var teacher: Teacher,
-        @OneToMany
+        @OneToMany(cascade = [CascadeType.ALL])
         var taskSessions: MutableList<TaskSession> = mutableListOf(),
         var startDate: Long,
         var endDate: Long,
@@ -39,7 +40,7 @@ data class ClassSession(
 
     fun response(): ClassSessionResponse {
         return ClassSessionResponse(
-                this.students,
+                this.students.map { it.response() }.toMutableList(),
                 this.teacher.simple(),
                 this.taskSessions,
                 this.startDate,
@@ -56,7 +57,7 @@ data class ClassSessionRequest(
 )
 
 data class ClassSessionResponse(
-        val students: MutableList<Student>,
+        val students: MutableList<StudentResponse>,
         val teacher: TeacherSimpleResponse,
         val taskSessions: MutableList<TaskSession>,
         val startDate: Long,

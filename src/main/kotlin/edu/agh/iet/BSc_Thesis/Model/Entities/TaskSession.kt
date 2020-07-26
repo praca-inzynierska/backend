@@ -9,9 +9,7 @@ import javax.persistence.*;
 data class TaskSession(
         @ManyToOne
         var task: Task? = null,
-        @ManyToOne
-        var classSession: ClassSession? = null,
-        @OneToMany                  //TODO change to oneToMany
+        @OneToMany
         var students: MutableList<Student>,
         var grade: Int = -1,
         var needsHelp: Boolean = false,
@@ -23,7 +21,6 @@ data class TaskSession(
                 return TaskSessionResponse(
                         this.id,
                         this.task!!.response(),
-                        this.classSession!!.response(),
                         this.students.map { it.response() }.toMutableList(),
                         this.grade,
                         this.needsHelp,
@@ -41,7 +38,6 @@ data class TaskSessionRequest(
 data class TaskSessionResponse(
         var id: Long,
         var task: TaskResponse,
-        var classSession: ClassSessionResponse,
         var students: MutableList<StudentResponse>,
         var grade: Int,
         var needsHelp: Boolean,

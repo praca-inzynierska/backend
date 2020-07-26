@@ -15,12 +15,6 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/classSessions")
 class ClassSessionController : BaseController() {
 
-    @Autowired
-    lateinit var classSessionRepository: ClassSessionRepository
-
-    @Autowired
-    lateinit var studentRepository: StudentRepository
-
     @CrossOrigin
     @PostMapping("/create")
     fun addClassSession(@RequestBody classSessionRequest: ClassSessionRequest, @RequestHeader("Token") token: String): ResponseEntity<Any> {
@@ -50,7 +44,7 @@ class ClassSessionController : BaseController() {
 
     @CrossOrigin
     @GetMapping("/{id}")
-    fun getClassSession(@PathVariable id: Long, @RequestHeader("Token") token: String, @RequestParam simple: Boolean): ResponseEntity<Any> {
+    fun getClassSession(@PathVariable id: Long, @RequestHeader("Token") token: String, @RequestParam simple: Boolean = false): ResponseEntity<Any> {
         val user = JwtUtils.getUserFromToken(token)
         val teacher = teacherRepository.getTeacherByUser_Username(user.username)!!
         val classSession = classSessionRepository.getOne(id)
