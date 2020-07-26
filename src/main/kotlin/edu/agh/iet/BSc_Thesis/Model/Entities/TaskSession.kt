@@ -14,6 +14,7 @@ data class TaskSession(
         var grade: Int = -1,
         var needsHelp: Boolean = false,
         var readyToRate: Boolean = false,
+        var deadline: Long,
         @Id @GeneratedValue(strategy = GenerationType.AUTO)
         var id: Long = -1
 ) {
@@ -24,7 +25,8 @@ data class TaskSession(
                         this.students.map { it.response() }.toMutableList(),
                         this.grade,
                         this.needsHelp,
-                        this.readyToRate
+                        this.readyToRate,
+                        this.deadline
                 )
         }
 }
@@ -41,5 +43,6 @@ data class TaskSessionResponse(
         var students: MutableList<StudentResponse>,
         var grade: Int,
         var needsHelp: Boolean,
-        var readyToRate: Boolean
+        var readyToRate: Boolean,
+        var deadline: Long
 )

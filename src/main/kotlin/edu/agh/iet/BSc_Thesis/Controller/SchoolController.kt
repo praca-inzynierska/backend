@@ -44,7 +44,7 @@ class SchoolController : BaseController() {
     @CrossOrigin
     @GetMapping("")
     fun getSchools(@RequestHeader("Token") token: String): ResponseEntity<Any> {
-        if (JwtUtils.isTeacher(token)) {
+        if (isTeacher(token)) {
             return ResponseEntity(schoolRepository.findAll().map { it.response() }, OK)
         } else return ResponseEntity(UNAUTHORIZED)
     }
