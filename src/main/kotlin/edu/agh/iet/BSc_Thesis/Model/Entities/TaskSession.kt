@@ -9,12 +9,16 @@ import javax.persistence.*;
 data class TaskSession(
         @ManyToOne
         var task: Task? = null,
-        @OneToMany
+        @ManyToOne
+        var classSession: ClassSession? = null,
+        @OneToMany                  //TODO change to oneToMany
         var students: MutableList<Student>,
         var grade: Int = -1,
         var needsHelp: Boolean = false,
         var readyToRate: Boolean = false,
         var deadline: Long,
+//        var whiteBoardStatus: String = "",      // dodane, mapa <string, toolstate> narzedzia
+//        var toolsMap: Map<String, ToolState> = emptyMap<String, ToolState>(),
         @Id @GeneratedValue(strategy = GenerationType.AUTO)
         var id: Long = -1
 ) {
@@ -22,11 +26,11 @@ data class TaskSession(
                 return TaskSessionResponse(
                         this.id,
                         this.task!!.response(),
+                        this.classSession!!.response(),
                         this.students.map { it.response() }.toMutableList(),
                         this.grade,
                         this.needsHelp,
-                        this.readyToRate,
-                        this.deadline
+                        this.readyToRate
                 )
         }
 }
@@ -40,9 +44,9 @@ data class TaskSessionRequest(
 data class TaskSessionResponse(
         var id: Long,
         var task: TaskResponse,
+        var classSession: ClassSessionResponse,
         var students: MutableList<StudentResponse>,
         var grade: Int,
         var needsHelp: Boolean,
-        var readyToRate: Boolean,
-        var deadline: Long
+        var readyToRate: Boolean
 )
