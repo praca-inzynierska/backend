@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface ToolStateRepository : JpaRepository<ToolState, Long> {
-    fun getAllByTaskSessionID(taskSessionID: Long): List<ToolState>
+    fun getAllByTaskSessionId(taskSessionId: Long): List<ToolState>
 }

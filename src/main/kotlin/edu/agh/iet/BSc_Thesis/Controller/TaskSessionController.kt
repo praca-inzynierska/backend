@@ -13,16 +13,16 @@ import org.springframework.web.bind.annotation.*
 class TaskSessionController : BaseController() {
 
     @Autowired
-    lateinit var taskSessionRepository: TaskSessionRepository
+    override lateinit var taskSessionRepository: TaskSessionRepository
 
     @Autowired
-    lateinit var classSessionRepository: ClassSessionRepository
+    override lateinit var classSessionRepository: ClassSessionRepository
 
     @Autowired
-    lateinit var taskRepository: TaskRepository
+    override lateinit var taskRepository: TaskRepository
 
     @Autowired
-    lateinit var studentRepository: StudentRepository
+    override lateinit var studentRepository: StudentRepository
 
     @Autowired
     lateinit var toolStateRepository: ToolStateRepository
@@ -33,7 +33,8 @@ class TaskSessionController : BaseController() {
         return if (JwtUtils.isTeacher(token)) {
             val task = taskRepository.getOne(taskSessionRequest.taskId)
             val classSession = classSessionRepository.getOne(taskSessionRequest.classSessionId)
-            val students = studentRepository.getAllByIdIn(taskSessionRequest.studentIds).toMutableList()
+//            val students = studentRepository.getAllByIdIn(taskSessionRequest.studentIds).toMutableList()
+            val students = classSession.students
             val taskSession = TaskSession(
                     task,
                     classSession,
@@ -45,7 +46,8 @@ class TaskSessionController : BaseController() {
             if(task.tools.contains("whiteboard")) {
                 val toolState = ToolState(
                         taskSession,
-                        "wb-" + taskSession.id.toString(),          // + hash
+                        "",
+                        taskSession.id.toString(),          // + hash
                         "whiteboard"
                 )
                 toolStateRepository.save(toolState)
@@ -77,47 +79,65 @@ class TaskSessionController : BaseController() {
         return ResponseEntity(taskSessionRepository.findAll().map { it.response() }, HttpStatus.OK)
     }
 
-    @CrossOrigin
-    @PostMapping("/{id}/create/tool_state/{name}")      // tworzy
-    fun addToolState(@PathVariable id: Long, @PathVariable name: String, @RequestBody toolStateRequest: ToolStateRequest, @RequestHeader("Token") token: String): ResponseEntity<Any> {
-        val taskSession = taskSessionRepository.getOne(id)
-//        val status = toolStateRepository.getOne(toolStateRequest.status)
-//        val name = ""
-        val toolState = ToolState(
-                taskSession,
-//                status,
-                name
-        )
-        toolStateRepository.save(toolState)
-        return ResponseEntity(toolState.response(), HttpStatus.CREATED)
-    }
+//    @CrossOrigin
+//    @PostMapping("/{id}/create/tool_state/{type}/{name}")      // tworzy
+//    fun addToolState(@PathVariable id: Long, @PathVariable type: String, @PathVariable name: String, @RequestBody toolStateRequest: ToolStateRequest, @RequestHeader("Token") token: String): ResponseEntity<Any> {
+//        val taskSession = taskSessionRepository.getOne(id)
+////        val status = toolStateRepository.getOne(toolStateRequest.status)
+////        val name = ""
+//        val toolState = ToolState(
+//                taskSession,
+////                status,
+//                name,
+//                type
+//        )
+//        toolStateRepository.save(toolState)
+//        return ResponseEntity(toolState.response(), HttpStatus.CREATED)
+//    }
 
-    @CrossOrigin
-    @GetMapping("/{id}/tool_state/{type}")
-    fun getToolState(@PathVariable id: Long, @PathVariable type: String, @RequestHeader("Token") token: String): ResponseEntity<Any> {
-        val taskSession = taskSessionRepository.getOne(id)
-        val toolStates = toolStateRepository.getAllByTaskSessionID(id)
-
-        if(type.equals("whiteboard")) {
-            for(toolState in toolStates) {
-                if(toolState.type.equals("whiteboard")) {
-                    return ResponseEntity(toolState.response(), HttpStatus.OK)
-                }
-            }
-        }
-
-        return ResponseEntity(HttpStatus.NOT_FOUND)
-    }
-
+//    @CrossOrigin
+//    @GetMapping("/{id}/tool_state/{type}")
+//    fun getToolState(@PathVariable id: Long, @PathVariable type: String, @RequestHeader("Token") token: String): ResponseEntity<Any> {
+//        val taskSession = taskSessionRepository.getOne(id)
+//        val toolStates = toolStateRepository.getAllByTaskSessionId(id)
+//
+//        if(type.equals("whiteboard")) {
+//            for(toolState in toolStates) {
+//                if(toolState.type.equals("whiteboard")) {
+//                    return ResponseEntity(toolState.response(), HttpStatus.OK)
+//                }
+//            }
+//        }
+//
+//        return ResponseEntity(HttpStatus.NOT_FOUND)
+//    }
+//
     @CrossOrigin
     @GetMapping("/{id}/tool_state")
     fun getToolStates(@PathVariable id: Long, @RequestHeader("Token") token: String): ResponseEntity<Any> {
         val taskSession = taskSessionRepository.getOne(id)
-        val toolStates = toolStateRepository.getAllByTaskSessionID(id)
+        val toolStates = toolStateRepository.getAllByTaskSessionId(id)
 
         return ResponseEntity(toolStates.map { it.response() }, HttpStatus.OK)
 
         return ResponseEntity(HttpStatus.NOT_FOUND)
+    }
+
+    @CrossOrigin
+    @PostMapping("/{id}/tool_state/{type}")      // tworzy
+    fun addToolState(@PathVariable id: Long, @PathVariable type: String, @RequestBody toolStateRequest: ToolStateRequest, @RequestHeader("Token") token: String): ResponseEntity<Any> {
+        val taskSession = taskSessionRepository.getOne(id)
+        val status = toolStateRequest.status
+//        val name = ""
+        val toolState = ToolState(
+                taskSession,
+                status,
+                toolStateRequest.name,
+                toolStateRequest.type
+        )
+
+        toolStateRepository.save(toolState)
+        return ResponseEntity(toolState.response(), HttpStatus.CREATED)
     }
 
 }

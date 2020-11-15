@@ -6,9 +6,9 @@ import javax.persistence.*
 @Table(name = "tool_state")
 data class ToolState(
         @OneToOne
-        var taskSeesionId: TaskSession? = null,                 // task session id      ?onetoone?
+        var taskSessionId: TaskSession? = null,                 // task session id      ?onetoone?
 
-//        var status: Any = "",                           // zawartosc, TODO:-> zmienic na object
+        var status: String = "",                           // zawartosc, TODO:-> zmienic na object
         var name: String = "",
         var type: String = "",
         @Id @GeneratedValue(strategy = GenerationType.AUTO)
@@ -16,8 +16,8 @@ data class ToolState(
 ) {
         fun response(): ToolStateResponse {
                 return ToolStateResponse(
-                        this.taskSeesionId,
-//                        this.status,
+                        this.taskSessionId,
+                        this.status,
                         this.name,
                         this.type,
                         this.id
@@ -27,14 +27,14 @@ data class ToolState(
 
 data class ToolStateRequest(
         var taskSessionId: Long = -1,
-//        var status: Any,
+        var status: String,
         var name: String,
         var type: String
 )
 
 data class ToolStateResponse(
         var taskSessionId: TaskSession?,
-//        var status: Any,
+        var status: String,
         var name: String,
         var type: String,
         var id: Long

@@ -130,18 +130,18 @@ class MockController : BaseController() {
             classSessionRepository.save(ClassSession(students, teacher, mutableListOf(), start, end))
         }
 
-        classSessions.forEach { classSession ->
-            classSession.students.chunked(3).mapIndexed { index, studentsChunk ->
-                val taskSession = TaskSession(
-                        tasks[index % tasks.size],
-                        studentsChunk.toMutableList(),
-                        deadline = LocalDateTime.now()
-                                .plusMinutes(tasks[index % tasks.size].minutes)
-                                .toEpochSecond(ZoneOffset.UTC))
-                classSession.addTaskSession(taskSession)
-                classSessionRepository.save(classSession)
-            }
-        }
+//        classSessions.forEach { classSession ->
+//            classSession.students.chunked(3).mapIndexed { index, studentsChunk ->
+//                val taskSession = TaskSession(
+//                        tasks[index % tasks.size],
+//                        studentsChunk.toMutableList())
+////                        deadline = LocalDateTime.now()
+////                                .plusMinutes(tasks[index % tasks.size].minutes)
+////                                .toEpochSecond(ZoneOffset.UTC))
+//                classSession.addTaskSession(taskSession)
+//                classSessionRepository.save(classSession)
+//            }
+//        }
 
         return ResponseEntity(HttpStatus.OK)
     }

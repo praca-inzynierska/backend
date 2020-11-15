@@ -15,10 +15,10 @@ open class BaseController {
     lateinit var teacherRepository: TeacherRepository
 
     @Autowired
-    lateinit var classSessionRepository: ClassSessionRepository
+    open lateinit var classSessionRepository: ClassSessionRepository
 
     @Autowired
-    lateinit var studentRepository: StudentRepository
+    open lateinit var studentRepository: StudentRepository
 
     @Autowired
     lateinit var schoolRepository: SchoolRepository
@@ -27,10 +27,10 @@ open class BaseController {
     lateinit var userRepository: UserRepository
 
     @Autowired
-    lateinit var taskRepository: TaskRepository
+    open lateinit var taskRepository: TaskRepository
 
     @Autowired
-    lateinit var taskSessionRepository: TaskSessionRepository
+    open lateinit var taskSessionRepository: TaskSessionRepository
 
     @CrossOrigin
     @RequestMapping(value = ["/**"], method = [RequestMethod.OPTIONS])
