@@ -7,7 +7,7 @@ import javax.persistence.*
 data class ToolState(
         @OneToOne
         var taskSessionId: TaskSession? = null,                 // task session id      ?onetoone?
-
+        @Column(name="status",columnDefinition="LONGTEXT")
         var status: String = "",                           // zawartosc, TODO:-> zmienic na object
         var name: String = "",
         var type: String = "",

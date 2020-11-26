@@ -16,7 +16,7 @@ data class TaskSession(
         var grade: Int = -1,
         var needsHelp: Boolean = false,
         var readyToRate: Boolean = false,
-//        var deadline: Long,
+        var deadline: Long,
 //        var whiteBoardStatus: String = "",      // dodane, mapa <string, toolstate> narzedzia
 //        var toolsMap: Map<String, ToolState> = emptyMap<String, ToolState>(),
         @Id @GeneratedValue(strategy = GenerationType.AUTO)
@@ -37,8 +37,8 @@ data class TaskSession(
 
 data class TaskSessionRequest(
         var taskId: Long = -1,
-        var classSessionId: Long = -1
-//        var studentIds: MutableList<Long>
+        var classSessionId: Long = -1,
+        var studentIds: MutableList<Long>
 )
 
 data class TaskSessionResponse(

@@ -1,5 +1,6 @@
 package edu.agh.iet.BSc_Thesis.Controller
 
+import com.fasterxml.jackson.databind.util.JSONPObject
 import edu.agh.iet.BSc_Thesis.Model.Entities.*
 import edu.agh.iet.BSc_Thesis.Repositories.*
 import edu.agh.iet.BSc_Thesis.Util.JwtUtils
@@ -7,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 @RestController
 @RequestMapping("/taskSessions")
@@ -41,7 +44,10 @@ class TaskSessionController : BaseController() {
                     students,
                     -1,
                     needsHelp = false,
-                    readyToRate = false
+                    readyToRate = false,
+                    deadline = LocalDateTime.now()                          // TODO: naprawic to
+                            .plusMinutes(100)
+                            .toEpochSecond(ZoneOffset.UTC)
                     )
             if(task.tools.contains("whiteboard")) {
                 val toolState = ToolState(
@@ -127,6 +133,7 @@ class TaskSessionController : BaseController() {
     @PostMapping("/{id}/tool_state/{type}")      // tworzy
     fun addToolState(@PathVariable id: Long, @PathVariable type: String, @RequestBody toolStateRequest: ToolStateRequest, @RequestHeader("Token") token: String): ResponseEntity<Any> {
         val taskSession = taskSessionRepository.getOne(id)
+        println(toolStateRequest.status)
         val status = toolStateRequest.status
 //        val name = ""
         val toolState = ToolState(
@@ -137,7 +144,7 @@ class TaskSessionController : BaseController() {
         )
 
         toolStateRepository.save(toolState)
-        return ResponseEntity(toolState.response(), HttpStatus.CREATED)
+        return ResponseEntity(HttpStatus.CREATED)
     }
 
 }
