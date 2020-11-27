@@ -3,6 +3,9 @@ package edu.agh.iet.BSc_Thesis.Controller
 import com.fasterxml.jackson.databind.util.JSONPObject
 import edu.agh.iet.BSc_Thesis.Model.Entities.*
 import edu.agh.iet.BSc_Thesis.Repositories.*
+import edu.agh.iet.BSc_Thesis.Model.Entities.TaskSession
+import edu.agh.iet.BSc_Thesis.Model.Entities.TaskSessionRequest
+import edu.agh.iet.BSc_Thesis.Model.Entities.TaskSessionResponse
 import edu.agh.iet.BSc_Thesis.Util.JwtUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -14,18 +17,6 @@ import java.time.ZoneOffset
 @RestController
 @RequestMapping("/taskSessions")
 class TaskSessionController : BaseController() {
-
-    @Autowired
-    override lateinit var taskSessionRepository: TaskSessionRepository
-
-    @Autowired
-    override lateinit var classSessionRepository: ClassSessionRepository
-
-    @Autowired
-    override lateinit var taskRepository: TaskRepository
-
-    @Autowired
-    override lateinit var studentRepository: StudentRepository
 
     @Autowired
     lateinit var toolStateRepository: ToolStateRepository
@@ -40,8 +31,8 @@ class TaskSessionController : BaseController() {
             val students = classSession.students
             val taskSession = TaskSession(
                     task,
-                    classSession,
                     students,
+                    classSession,
                     -1,
                     needsHelp = false,
                     readyToRate = false,
@@ -58,6 +49,8 @@ class TaskSessionController : BaseController() {
                 )
                 toolStateRepository.save(toolState)
             }
+            classSession.addTaskSession(taskSession)
+            classSessionRepository.save(classSession)
             taskSessionRepository.save(taskSession)
             ResponseEntity(taskSession.response(), HttpStatus.CREATED)
         } else ResponseEntity(HttpStatus.UNAUTHORIZED)
@@ -66,7 +59,9 @@ class TaskSessionController : BaseController() {
     @CrossOrigin
     @PostMapping("/{id}")
     fun editTaskSession(@PathVariable id: Long, @RequestBody newTaskSession: TaskSession, @RequestHeader("Token") token: String): ResponseEntity<Any> {
-        return if (JwtUtils.isTeacher(token)) {
+        val user = JwtUtils.getUserFromToken(token)
+        val oldTaskSession = taskSessionRepository.getOne(id)
+        return if (JwtUtils.isTeacher(token) && oldTaskSession.hasMember(user)) {
             taskSessionRepository.save(newTaskSession)
             ResponseEntity(newTaskSession.response(), HttpStatus.OK)
         } else ResponseEntity(HttpStatus.UNAUTHORIZED)
@@ -76,13 +71,18 @@ class TaskSessionController : BaseController() {
     @GetMapping("/{id}")
     fun getTaskSession(@PathVariable id: Long, @RequestHeader("Token") token: String): ResponseEntity<Any> {
         val taskSession = taskSessionRepository.getOne(id)
-        return ResponseEntity(taskSession.response(), HttpStatus.OK)
+        return if (taskSession.hasMember(JwtUtils.getUserFromToken(token)))
+            ResponseEntity(taskSession.response(), HttpStatus.OK)
+        else ResponseEntity(HttpStatus.NOT_FOUND)
     }
 
     @CrossOrigin
     @GetMapping("")
     fun getTaskSessions(@RequestHeader("Token") token: String): ResponseEntity<List<TaskSessionResponse>> {
-        return ResponseEntity(taskSessionRepository.findAll().map { it.response() }, HttpStatus.OK)
+        var user = JwtUtils.getUserFromToken(token)
+        return ResponseEntity(taskSessionRepository.findAll()
+                .filter { taskSession -> taskSession.hasMember(user) }
+                .map { it.response() }, HttpStatus.OK)
     }
 
 //    @CrossOrigin

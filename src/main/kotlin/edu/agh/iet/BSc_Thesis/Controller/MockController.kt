@@ -8,9 +8,6 @@ import edu.agh.iet.BSc_Thesis.Model.Entities.School.Teacher
 import edu.agh.iet.BSc_Thesis.Model.Entities.Task
 import edu.agh.iet.BSc_Thesis.Model.Entities.TaskSession
 import edu.agh.iet.BSc_Thesis.Model.Entities.User
-import org.hibernate.HibernateException
-import org.hibernate.Session
-import org.hibernate.Transaction
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.CrossOrigin
@@ -134,11 +131,11 @@ class MockController : BaseController() {
             classSession.students.chunked(3).mapIndexed { index, studentsChunk ->
                 val taskSession = TaskSession(
                         tasks[index % tasks.size],
-                        classSession,
                         studentsChunk.toMutableList(),
                         deadline = LocalDateTime.now()
                                 .plusMinutes(tasks[index % tasks.size].minutes)
-                                .toEpochSecond(ZoneOffset.UTC))
+                                .toEpochSecond(ZoneOffset.UTC),
+                        classSession = classSession)
                 classSession.addTaskSession(taskSession)
                 classSessionRepository.save(classSession)
             }
