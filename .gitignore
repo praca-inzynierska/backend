@@ -1,6 +1,8 @@
 HELP.md
 .gradle
+.cert
 build/
+*.log
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**
 !**/src/test/**
