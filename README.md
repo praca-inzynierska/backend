@@ -6,7 +6,7 @@ Część serwerowa aplikacji
 Do wygenerowania certyfikatu najlepiej użyć aplikacji keytool, która jest instalowana razem z
 JDK i znajduje się w bin, należy tam wejść przez cmd jako administrator i użyć poniższego polecenia:
 ```
-keytool -genkeypair -alias selfsigned_localhost_sslserver -keyalg RSA -keysize 2048 -storetype PKCS12 -cert.p12 -validity 3650
+keytool -genkeypair -alias selfsigned_localhost_sslserver -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore cert.p12 -validity 3650
 ```
 ## Wgranie naszego certyfikatu do programu
 Nasz certyfikat cert.p12 należy przenieść do
