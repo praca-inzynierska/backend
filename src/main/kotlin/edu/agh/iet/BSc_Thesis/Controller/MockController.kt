@@ -59,7 +59,7 @@ class MockController : BaseController() {
         //users
         var students = names.foldIndexed(mutableListOf<Student>(), { index, list, name ->
             var lastName = surnames[index % surnames.size]
-            var userToAdd = User("${name.toLowerCase()} ${lastName.toLowerCase()}", name, lastName, "asd")
+            var userToAdd = User("${name.toLowerCase()}_${lastName.toLowerCase()}", name, lastName, "asd")
             var studentToAdd = Student(userToAdd, mutableListOf())
             list.add(studentToAdd)
             list
@@ -76,7 +76,7 @@ class MockController : BaseController() {
 
 
         //school structure
-        var numberOfClasses = 3
+        var numberOfClasses = 4
         var schools = schoolNames.map { School(it, mutableListOf()) }
         var classes = 0.toLong().rangeTo(numberOfClasses * schoolNames.size)
                 .map { SchoolClass(it % numberOfClasses, mutableListOf()) }
@@ -130,11 +130,15 @@ class MockController : BaseController() {
             classSessionRepository.save(ClassSession(students, teacher, mutableListOf(), start, end))
         }
 
-        classSessions.forEach { classSession ->
+        for (classSession in classSessions) {
             classSession.students.chunked(3).mapIndexed { index, studentsChunk ->
                 val taskSession = TaskSession(
                         tasks[index % tasks.size],
-                        studentsChunk.toMutableList())
+                        classSession,
+                        studentsChunk.toMutableList(),
+                        deadline = LocalDateTime.now()
+                                .plusMinutes(tasks[index % tasks.size].minutes)
+                                .toEpochSecond(ZoneOffset.UTC))
                 classSession.addTaskSession(taskSession)
                 classSessionRepository.save(classSession)
             }

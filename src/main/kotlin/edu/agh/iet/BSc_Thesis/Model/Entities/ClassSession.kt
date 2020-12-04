@@ -12,7 +12,7 @@ import javax.persistence.*
 @Table(name = "class_session")
 data class ClassSession(
 
-        @OneToMany
+        @ManyToMany
         var students: MutableList<Student>,
         @OneToOne
         var teacher: Teacher,
