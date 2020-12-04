@@ -40,6 +40,20 @@ class ClassSessionController : BaseController() {
     }
 
     @CrossOrigin
+    @PostMapping("/delete/{id}")
+    fun deleteClassSession(@PathVariable id: Long, @RequestBody newClassSession: ClassSession, @RequestHeader("Token") token: String): ResponseEntity<Any> {
+        if (isTeacher(token)) {
+            val user = JwtUtils.getUserFromToken(token)
+            val teacher = teacherRepository.getTeacherByUser_Username(user.username)!!
+            val classSessionToDelete = classSessionRepository.getOne(id)
+            if (classSessionToDelete.teacher == teacher) {
+                classSessionRepository.delete(classSessionToDelete)
+                return ResponseEntity(OK)
+            } else return ResponseEntity(UNAUTHORIZED)
+        } else return ResponseEntity(UNAUTHORIZED)
+    }
+
+    @CrossOrigin
     @GetMapping("/{id}")
     fun getClassSession(@PathVariable id: Long, @RequestHeader("Token") token: String, @RequestParam simple: Boolean = false): ResponseEntity<Any> {
         val user = JwtUtils.getUserFromToken(token)

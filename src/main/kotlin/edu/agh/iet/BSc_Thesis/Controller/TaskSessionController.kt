@@ -68,6 +68,19 @@ class TaskSessionController : BaseController() {
     }
 
     @CrossOrigin
+    @PostMapping("/delete/{id}")
+    fun deleteTaskSession(@PathVariable id: Long, @RequestBody newTaskSession: TaskSession, @RequestHeader("Token") token: String): ResponseEntity<Any> {
+        val user = JwtUtils.getUserFromToken(token)
+        val taskSessionToDelete = taskSessionRepository.getOne(id)
+        return if (JwtUtils.isTeacher(token) && taskSessionToDelete.hasMember(user)) {
+            taskSessionToDelete.classSession.deleteTaskSession(taskSessionToDelete)
+            classSessionRepository.save(taskSessionToDelete.classSession)
+            taskSessionRepository.delete(taskSessionToDelete)
+            ResponseEntity(HttpStatus.OK)
+        } else ResponseEntity(HttpStatus.UNAUTHORIZED)
+    }
+
+    @CrossOrigin
     @GetMapping("/{id}")
     fun getTaskSession(@PathVariable id: Long, @RequestHeader("Token") token: String): ResponseEntity<Any> {
         val taskSession = taskSessionRepository.getOne(id)

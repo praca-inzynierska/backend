@@ -28,6 +28,10 @@ data class ClassSession(
         taskSessions.add(taskSession)
     }
 
+    fun deleteTaskSession(taskSession: TaskSession) {
+        taskSessions.remove(taskSession)
+    }
+
     fun simple(): ClassSessionSimpleResponse {
         return ClassSessionSimpleResponse(
                 this.students.map { it.id }.toMutableList(),
