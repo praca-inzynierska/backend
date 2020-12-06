@@ -143,6 +143,16 @@ class TaskSessionController : BaseController() {
                 toolStateRequest.type
         )
 
+        val tmp = toolStateRepository.findAll()
+        for (tmps in tmp) {
+            var tid = tmps.taskSessionId
+            if (tid != null) {
+                if(tid.id == id){
+                    val toolStateExact = tmps
+                    toolStateRepository.delete(toolStateExact)
+                }
+            }
+        }
         toolStateRepository.save(toolState)
         return ResponseEntity(HttpStatus.CREATED)
     }
