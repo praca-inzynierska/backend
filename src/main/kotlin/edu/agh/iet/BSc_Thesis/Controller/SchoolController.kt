@@ -1,12 +1,7 @@
 package edu.agh.iet.BSc_Thesis.Controller
 
-import edu.agh.iet.BSc_Thesis.Model.Entities.ClassSession
 import edu.agh.iet.BSc_Thesis.Model.Entities.School.School
 import edu.agh.iet.BSc_Thesis.Model.Entities.School.SchoolRequest
-import edu.agh.iet.BSc_Thesis.Repositories.SchoolRepository
-import edu.agh.iet.BSc_Thesis.Util.JwtUtils
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.OK
 import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.http.ResponseEntity
@@ -19,7 +14,7 @@ class SchoolController : BaseController() {
     @CrossOrigin
     @PostMapping("/create")
     fun addSchool(@RequestBody schoolRequest: SchoolRequest, @RequestHeader("Token") token: String): ResponseEntity<Any> {
-        if (JwtUtils.isTeacher(token)) {
+        if (isTeacher(token)) {
             val school = School(schoolRequest.name, mutableListOf())
             schoolRepository.save(school)
             return ResponseEntity(school.response(), OK)
@@ -29,7 +24,7 @@ class SchoolController : BaseController() {
     @CrossOrigin
     @PostMapping("/edit/{id}")
     fun editSchool(@PathVariable id: Long, @RequestBody newSchool: School, @RequestHeader("Token") token: String): ResponseEntity<Any> {
-        if (JwtUtils.isTeacher(token)) {
+        if (isTeacher(token)) {
             schoolRepository.save(newSchool)
             return ResponseEntity(newSchool.response(), OK)
         } else return ResponseEntity(UNAUTHORIZED)

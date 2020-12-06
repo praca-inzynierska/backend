@@ -27,21 +27,25 @@ class ClassSessionController : BaseController() {
 
     @CrossOrigin
     @PostMapping("/edit/{id}")
-    fun editClassSession(@PathVariable id: Long, @RequestBody newClassSession: ClassSession, @RequestHeader("Token") token: String): ResponseEntity<Any> {
+    fun editClassSession(@PathVariable id: Long, @RequestBody editedClassSessionRequest: ClassSessionRequest, @RequestHeader("Token") token: String): ResponseEntity<Any> {
         if (isTeacher(token)) {
             val user = JwtUtils.getUserFromToken(token)
             val teacher = teacherRepository.getTeacherByUser_Username(user.username)!!
             val editedClassSession = classSessionRepository.getOne(id)
-            if (editedClassSession.teacher == teacher) {
-                classSessionRepository.save(newClassSession)
-                return ResponseEntity(newClassSession.response(), OK)
+            if (editedClassSession.teacher.id == teacher.id) {
+                val students = studentRepository.findAllById(editedClassSessionRequest.students)
+                editedClassSession.students = students
+                editedClassSession.startDate = editedClassSessionRequest.startDate
+                editedClassSession.endDate = editedClassSessionRequest.endDate
+                classSessionRepository.save(editedClassSession)
+                return ResponseEntity(editedClassSession.response(), OK)
             } else return ResponseEntity(UNAUTHORIZED)
         } else return ResponseEntity(UNAUTHORIZED)
     }
 
     @CrossOrigin
-    @PostMapping("/delete/{id}")
-    fun deleteClassSession(@PathVariable id: Long, @RequestBody newClassSession: ClassSession, @RequestHeader("Token") token: String): ResponseEntity<Any> {
+    @GetMapping("/delete/{id}")
+    fun deleteClassSession(@PathVariable id: Long, @RequestHeader("Token") token: String): ResponseEntity<Any> {
         if (isTeacher(token)) {
             val user = JwtUtils.getUserFromToken(token)
             val teacher = teacherRepository.getTeacherByUser_Username(user.username)!!

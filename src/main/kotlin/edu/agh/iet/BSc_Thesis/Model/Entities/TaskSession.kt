@@ -39,7 +39,7 @@ data class TaskSession(
         return (this.students
                 .map { it.user.id }
                 .contains(user.id)
-                || this.classSession.teacher.id == user.id)
+                || this.classSession.teacher.user.id == user.id)
     }
 }
 

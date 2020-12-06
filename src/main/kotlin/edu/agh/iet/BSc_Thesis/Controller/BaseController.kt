@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse
 open class BaseController {
 
     @Autowired
-    lateinit var teacherRepository: TeacherRepository
+    open lateinit var teacherRepository: TeacherRepository
 
     @Autowired
     open lateinit var classSessionRepository: ClassSessionRepository
@@ -21,10 +21,10 @@ open class BaseController {
     open lateinit var studentRepository: StudentRepository
 
     @Autowired
-    lateinit var schoolRepository: SchoolRepository
+    open lateinit var schoolRepository: SchoolRepository
 
     @Autowired
-    lateinit var userRepository: UserRepository
+    open lateinit var userRepository: UserRepository
 
     @Autowired
     open lateinit var taskRepository: TaskRepository

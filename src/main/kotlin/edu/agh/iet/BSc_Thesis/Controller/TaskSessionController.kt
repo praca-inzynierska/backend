@@ -1,11 +1,7 @@
 package edu.agh.iet.BSc_Thesis.Controller
 
-import com.fasterxml.jackson.databind.util.JSONPObject
 import edu.agh.iet.BSc_Thesis.Model.Entities.*
-import edu.agh.iet.BSc_Thesis.Repositories.*
-import edu.agh.iet.BSc_Thesis.Model.Entities.TaskSession
-import edu.agh.iet.BSc_Thesis.Model.Entities.TaskSessionRequest
-import edu.agh.iet.BSc_Thesis.Model.Entities.TaskSessionResponse
+import edu.agh.iet.BSc_Thesis.Repositories.ToolStateRepository
 import edu.agh.iet.BSc_Thesis.Util.JwtUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -24,7 +20,7 @@ class TaskSessionController : BaseController() {
     @CrossOrigin
     @PostMapping("/create")
     fun addTaskSession(@RequestBody taskSessionRequest: TaskSessionRequest, @RequestHeader("Token") token: String): ResponseEntity<Any> {
-        return if (JwtUtils.isTeacher(token)) {
+        return if (isTeacher(token)) {
             val task = taskRepository.getOne(taskSessionRequest.taskId)
             val classSession = classSessionRepository.getOne(taskSessionRequest.classSessionId)
 //            val students = studentRepository.getAllByIdIn(taskSessionRequest.studentIds).toMutableList()
@@ -39,7 +35,7 @@ class TaskSessionController : BaseController() {
                     deadline = LocalDateTime.now()                          // TODO: naprawic to
                             .plusMinutes(100)
                             .toEpochSecond(ZoneOffset.UTC)
-                    )
+            )
             if(task.tools.contains("whiteboard")) {
                 val toolState = ToolState(
                         taskSession,
@@ -61,18 +57,18 @@ class TaskSessionController : BaseController() {
     fun editTaskSession(@PathVariable id: Long, @RequestBody newTaskSession: TaskSession, @RequestHeader("Token") token: String): ResponseEntity<Any> {
         val user = JwtUtils.getUserFromToken(token)
         val oldTaskSession = taskSessionRepository.getOne(id)
-        return if (JwtUtils.isTeacher(token) && oldTaskSession.hasMember(user)) {
+        return if (isTeacher(token) && oldTaskSession.hasMember(user)) {
             taskSessionRepository.save(newTaskSession)
             ResponseEntity(newTaskSession.response(), HttpStatus.OK)
         } else ResponseEntity(HttpStatus.UNAUTHORIZED)
     }
 
     @CrossOrigin
-    @PostMapping("/delete/{id}")
-    fun deleteTaskSession(@PathVariable id: Long, @RequestBody newTaskSession: TaskSession, @RequestHeader("Token") token: String): ResponseEntity<Any> {
+    @GetMapping("/delete/{id}")
+    fun deleteTaskSession(@PathVariable id: Long, @RequestHeader("Token") token: String): ResponseEntity<Any> {
         val user = JwtUtils.getUserFromToken(token)
         val taskSessionToDelete = taskSessionRepository.getOne(id)
-        return if (JwtUtils.isTeacher(token) && taskSessionToDelete.hasMember(user)) {
+        return if (isTeacher(token) && taskSessionToDelete.hasMember(user)) {
             taskSessionToDelete.classSession.deleteTaskSession(taskSessionToDelete)
             classSessionRepository.save(taskSessionToDelete.classSession)
             taskSessionRepository.delete(taskSessionToDelete)

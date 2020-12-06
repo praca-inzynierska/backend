@@ -51,10 +51,4 @@ object JwtUtils {
     fun getUserFromToken(token: String): User {
         return userRepository.getUserByUsername(getClaimsFromToken(token).getUsername())!!
     }
-
-    fun isTeacher(token: String): Boolean {
-        val username = getClaimsFromToken(token).getUsername()
-        val teacher = teacherRepository.getTeacherByUser_Username(username)
-        return (teacher != null)
-    }
 }
