@@ -1,12 +1,16 @@
 package edu.agh.iet.BSc_Thesis
 
+import edu.agh.iet.BSc_Thesis.Config.CustomProperties
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
-import java.sql.DriverManager
 
 
 @SpringBootApplication
+@ConfigurationPropertiesScan("edu.agh.iet.BSc_Thesis.Config")
+@EnableConfigurationProperties(CustomProperties::class)
 @EnableJpaRepositories
 class SecureCommunicatorApplication
 

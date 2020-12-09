@@ -1,10 +1,10 @@
 package edu.agh.iet.BSc_Thesis.Model.Entities
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import edu.agh.iet.BSc_Thesis.Model.Entities.School.Student
 import edu.agh.iet.BSc_Thesis.Model.Entities.School.StudentResponse
 import edu.agh.iet.BSc_Thesis.Model.Entities.School.Teacher
 import edu.agh.iet.BSc_Thesis.Model.Entities.School.TeacherSimpleResponse
-import org.springframework.data.jpa.domain.Specification
 import javax.persistence.*
 
 
@@ -17,6 +17,7 @@ data class ClassSession(
         @OneToOne
         var teacher: Teacher,
         @OneToMany(cascade = [CascadeType.ALL])
+        @JsonIgnoreProperties("classSession")
         var taskSessions: MutableList<TaskSession> = mutableListOf(),
         var startDate: Long,
         var endDate: Long,
@@ -25,6 +26,10 @@ data class ClassSession(
 ) {
     fun addTaskSession(taskSession: TaskSession) {
         taskSessions.add(taskSession)
+    }
+
+    fun deleteTaskSession(taskSession: TaskSession) {
+        taskSessions.remove(taskSession)
     }
 
     fun simple(): ClassSessionSimpleResponse {
@@ -47,6 +52,13 @@ data class ClassSession(
                 this.endDate,
                 this.id
         )
+    }
+
+    fun hasMember(user: User): Boolean {
+        return (this.students
+                .map { it.user.id }
+                .contains(user.id)
+                || this.teacher.user.id == user.id)
     }
 }
 

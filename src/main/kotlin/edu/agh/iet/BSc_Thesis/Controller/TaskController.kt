@@ -2,11 +2,9 @@ package edu.agh.iet.BSc_Thesis.Controller
 
 import edu.agh.iet.BSc_Thesis.Model.Entities.Task
 import edu.agh.iet.BSc_Thesis.Model.Entities.TaskRequest
-import edu.agh.iet.BSc_Thesis.Repositories.TaskRepository
-import edu.agh.iet.BSc_Thesis.Repositories.UserRepository
+import edu.agh.iet.BSc_Thesis.Util.JwtUtils
 import edu.agh.iet.BSc_Thesis.Util.JwtUtils.getClaimsFromToken
 import edu.agh.iet.BSc_Thesis.Util.JwtUtils.getUsername
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus.*
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -62,7 +60,11 @@ class TaskController : BaseController() {
     @CrossOrigin
     @GetMapping("/{id}")
     fun getTask(@PathVariable id: Long, @RequestHeader("Token") token: String): ResponseEntity<Any> {
-        return ResponseEntity(taskRepository.getOne(id).response(), OK)
+        val user = JwtUtils.getUserFromToken(token)
+        val task = taskRepository.getOne(id)
+        return if (task.teacher!!.id == user.id)
+            ResponseEntity(taskRepository.getOne(id).response(), OK)
+        else ResponseEntity(NOT_FOUND)
     }
 
     @CrossOrigin
