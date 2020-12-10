@@ -94,57 +94,29 @@ class TaskSessionController : BaseController() {
                 .map { it.response() }, HttpStatus.OK)
     }
 
-//    @CrossOrigin
-//    @PostMapping("/{id}/create/tool_state/{type}/{name}")      // tworzy
-//    fun addToolState(@PathVariable id: Long, @PathVariable type: String, @PathVariable name: String, @RequestBody toolStateRequest: ToolStateRequest, @RequestHeader("Token") token: String): ResponseEntity<Any> {
-//        val taskSession = taskSessionRepository.getOne(id)
-////        val status = toolStateRepository.getOne(toolStateRequest.status)
-////        val name = ""
-//        val toolState = ToolState(
-//                taskSession,
-////                status,
-//                name,
-//                type
-//        )
-//        toolStateRepository.save(toolState)
-//        return ResponseEntity(toolState.response(), HttpStatus.CREATED)
-//    }
-
-//    @CrossOrigin
-//    @GetMapping("/{id}/tool_state/{type}")
-//    fun getToolState(@PathVariable id: Long, @PathVariable type: String, @RequestHeader("Token") token: String): ResponseEntity<Any> {
-//        val taskSession = taskSessionRepository.getOne(id)
-//        val toolStates = toolStateRepository.getAllByTaskSessionId(id)
-//
-//        if(type.equals("whiteboard")) {
-//            for(toolState in toolStates) {
-//                if(toolState.type.equals("whiteboard")) {
-//                    return ResponseEntity(toolState.response(), HttpStatus.OK)
-//                }
-//            }
-//        }
-//
-//        return ResponseEntity(HttpStatus.NOT_FOUND)
-//    }
-//
     @CrossOrigin
-    @GetMapping("/{id}/tool_state")
-    fun getToolStates(@PathVariable id: Long, @RequestHeader("Token") token: String): ResponseEntity<Any> {
+    @GetMapping("/{id}/tool_state/{type}")      // get tool_state
+    fun getToolStates(@PathVariable id: Long, @PathVariable type: String, @RequestHeader("Token") token: String): ResponseEntity<Any> {
         val taskSession = taskSessionRepository.getOne(id)
-        val toolStates = toolStateRepository.getAllByTaskSessionId(id)
+        val toolStates = toolStateRepository.findAll()
 
-        return ResponseEntity(toolStates.map { it.response() }, HttpStatus.OK)
+        for(toolState in toolStates) {
+            var tsId = toolState.taskSessionId
+            if (tsId != null) {
+                if (tsId.id == id && toolState.type == type) {
+                    return ResponseEntity(toolState, HttpStatus.OK)
+                }
+            }
+        }
 
         return ResponseEntity(HttpStatus.NOT_FOUND)
     }
 
     @CrossOrigin
-    @PostMapping("/{id}/tool_state/{type}")      // tworzy
+    @PostMapping("/{id}/tool_state/{type}")      // create and update tool_state
     fun addToolState(@PathVariable id: Long, @PathVariable type: String, @RequestBody toolStateRequest: ToolStateRequest, @RequestHeader("Token") token: String): ResponseEntity<Any> {
         val taskSession = taskSessionRepository.getOne(id)
-        println(toolStateRequest.status)
         val status = toolStateRequest.status
-//        val name = ""
         val toolState = ToolState(
                 taskSession,
                 status,
@@ -152,6 +124,16 @@ class TaskSessionController : BaseController() {
                 toolStateRequest.type
         )
 
+        val toolStates = toolStateRepository.findAll()
+        for (ts in toolStates) {
+            var tsId = ts.taskSessionId
+            if (tsId != null) {
+                if(tsId.id == id && ts.type == type){
+                    val toolStateExact = ts
+                    toolStateRepository.delete(toolStateExact)
+                }
+            }
+        }
         toolStateRepository.save(toolState)
         return ResponseEntity(HttpStatus.CREATED)
     }
