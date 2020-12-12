@@ -29,14 +29,15 @@ class UserController : BaseController() {
             val studentToCreate = Student(userToCreate, mutableListOf())
             studentRepository.save(studentToCreate)
         }
-        return LoginResponse(generateToken(userToCreate), userToCreate.username)
+        return LoginResponse(generateToken(userToCreate), userToCreate.username, registerRequest.isTeacher)
     }
 
     @CrossOrigin
     @PostMapping("/login")
     fun login(@RequestBody loginRequest: LoginRequest): LoginResponse {
         val user = userRepository.getUserByUsernameAndPassword(username = loginRequest.username, password = loginRequest.password)
-        return LoginResponse(generateToken(user), "${user.firstName} ${user.lastName}")
+        val token = generateToken(user)
+        return LoginResponse(token, "${user.firstName} ${user.lastName}", isTeacher(token))
     }
 
     @CrossOrigin
@@ -50,7 +51,8 @@ class UserController : BaseController() {
 
 data class LoginResponse(
         var token: String,
-        var username: String
+        var username: String,
+        var isTeacher: Boolean
 )
 
 data class UserInfoResponse(

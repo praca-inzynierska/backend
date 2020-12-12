@@ -70,8 +70,10 @@ class TaskController : BaseController() {
     @CrossOrigin
     @GetMapping("")
     fun getTasks(@RequestHeader("Token") token: String): ResponseEntity<Any> {
-        val user = userRepository.getUserByUsername(getClaimsFromToken(token).getUsername())!!
-        val teacher = teacherRepository.getTeacherByUser_Username(user.username)!!
-        return ResponseEntity(taskRepository.getTasksByTeacher_Id(teacher.id).map { it.response() }, OK)
+        return if (isTeacher(token)) {
+            val user = userRepository.getUserByUsername(getClaimsFromToken(token).getUsername())!!
+            val teacher = teacherRepository.getTeacherByUser_Username(user.username)!!
+            ResponseEntity(taskRepository.getTasksByTeacher_Id(teacher.id).map { it.response() }, OK)
+        } else ResponseEntity(UNAUTHORIZED)
     }
 }
