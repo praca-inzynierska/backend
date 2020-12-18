@@ -19,8 +19,8 @@ class ClassSessionController : BaseController() {
             val user = JwtUtils.getUserFromToken(token)
             val teacher = teacherRepository.getTeacherByUser_Username(user.username)!!
             val students = studentRepository.findAllById(classSessionRequest.students)
-            val newClassSession = ClassSession(students, teacher, startDate = classSessionRequest.startDate, endDate = classSessionRequest.endDate)
-            classSessionRepository.save(newClassSession)
+            var newClassSession = ClassSession(students, teacher, startDate = classSessionRequest.startDate, endDate = classSessionRequest.endDate)
+            newClassSession = classSessionRepository.save(newClassSession)
             return ResponseEntity(newClassSession.response(), CREATED)
         } else return ResponseEntity(UNAUTHORIZED)
     }

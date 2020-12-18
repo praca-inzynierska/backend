@@ -76,7 +76,7 @@ class MockController : BaseController() {
         var numberOfClasses = 4
         var schools = schoolNames.map { School(it, mutableListOf()) }
         var classes = 0.toLong().rangeTo(numberOfClasses * schoolNames.size)
-                .map { SchoolClass(it % numberOfClasses, mutableListOf()) }
+                .map { SchoolClass(it % numberOfClasses + 1, mutableListOf()) }
         students.forEachIndexed { index, student ->
             classes[index % classes.size].students.add(student)
         }

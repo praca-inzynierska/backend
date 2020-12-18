@@ -34,7 +34,7 @@ class TaskController : BaseController() {
     }
 
     @CrossOrigin
-    @PostMapping("/{id}")
+    @PostMapping("/edit/{id}")
     fun editTask(
             @PathVariable id: Long,
             @RequestBody task: TaskRequest,
@@ -43,13 +43,11 @@ class TaskController : BaseController() {
         val user = userRepository.getUserByUsername(getClaimsFromToken(token).getUsername())!!
         val teacher = teacherRepository.getTeacherByUser_Username(user.username)
         val editedTask = taskRepository.getOne(id)
-        if (editedTask.teacher == teacher) {
-            val newTeacher = teacherRepository.getOne(task.teacher)
+        if (editedTask.teacher!!.id == teacher!!.id) {
             editedTask.description = task.description
             editedTask.minutes = task.minutes
             editedTask.name = task.name
             editedTask.subject = task.subject
-            editedTask.teacher = newTeacher
             editedTask.tools = task.tools
             editedTask.type = task.type
             taskRepository.save(editedTask)
@@ -62,7 +60,7 @@ class TaskController : BaseController() {
     fun getTask(@PathVariable id: Long, @RequestHeader("Token") token: String): ResponseEntity<Any> {
         val user = JwtUtils.getUserFromToken(token)
         val task = taskRepository.getOne(id)
-        return if (task.teacher!!.id == user.id)
+        return if (task.teacher!!.user.id == user.id)
             ResponseEntity(taskRepository.getOne(id).response(), OK)
         else ResponseEntity(NOT_FOUND)
     }
