@@ -108,6 +108,12 @@ class TaskSessionController : BaseController() {
                 }
             }
         }
+        if (toolStates.filter{ toolState -> toolState.type == "chat"  }.none { toolState -> toolState.id == id }) {
+            return ResponseEntity(ToolState(taskSessionId = taskSession, status =  "[]", name = type, type = type), HttpStatus.OK)
+        }
+        if(toolStates.isEmpty()) {
+            return ResponseEntity(ToolState(taskSessionId = taskSession, status =  "[]", name = type, type = type), HttpStatus.OK)
+        }
 
         return ResponseEntity(HttpStatus.NOT_FOUND)
     }

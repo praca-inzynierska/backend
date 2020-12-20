@@ -24,6 +24,7 @@ class AuthInterceptor : HandlerInterceptorAdapter() {
         return if (!listOf("login", "register", "mock").contains(serviceName) && request.method != "OPTIONS") {
             val token = request.getHeader("Token")
             if(token.equals("whiteboard_status")) true
+            else if (token == "chat_status") true
             else {
                 try {
                     JwtUtils.validateToken(token)
