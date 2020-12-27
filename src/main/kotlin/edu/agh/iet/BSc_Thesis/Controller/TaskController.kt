@@ -8,6 +8,7 @@ import edu.agh.iet.BSc_Thesis.Util.JwtUtils.getUsername
 import org.springframework.http.HttpStatus.*
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.sql.SQLIntegrityConstraintViolationException
 
 
 @RestController
@@ -63,6 +64,21 @@ class TaskController : BaseController() {
         return if (task.teacher!!.user.id == user.id)
             ResponseEntity(taskRepository.getOne(id).response(), OK)
         else ResponseEntity(NOT_FOUND)
+    }
+
+    @CrossOrigin
+    @GetMapping("/delete/{id}")
+    fun deleteTask(@PathVariable id: Long, @RequestHeader("Token") token: String): ResponseEntity<Any> {
+        val user = JwtUtils.getUserFromToken(token)
+        val task = taskRepository.getOne(id)
+        return if (task.teacher!!.user.id == user.id) {
+            try {
+                 taskRepository.deleteById(id)
+             } catch (ex: Exception) {
+                 return ResponseEntity.status(409).body("Task already used in a task session")
+             }
+            ResponseEntity(OK)
+        } else ResponseEntity(NOT_FOUND)
     }
 
     @CrossOrigin

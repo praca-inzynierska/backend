@@ -81,10 +81,11 @@ class MockController : BaseController() {
             classes[index % classes.size].students.add(student)
         }
         classes.forEachIndexed { index, schoolClass ->
-            schools[index % schools.size].classes.add(schoolClass)
+            schools[index % schools.size].addSchoolClass(schoolClass)
         }
 
         schools = schools.map { schoolRepository.save(it) }
+        students.map { studentRepository.save(it) }
 
         //tasks
         var task0: Task = Task(

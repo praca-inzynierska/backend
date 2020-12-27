@@ -4,12 +4,8 @@ import edu.agh.iet.BSc_Thesis.Controller.UserInfoResponse.Companion.toUserInfoRe
 import edu.agh.iet.BSc_Thesis.Model.Entities.School.Student
 import edu.agh.iet.BSc_Thesis.Model.Entities.School.Teacher
 import edu.agh.iet.BSc_Thesis.Model.Entities.User
-import edu.agh.iet.BSc_Thesis.Repositories.StudentRepository
-import edu.agh.iet.BSc_Thesis.Repositories.TeacherRepository
-import edu.agh.iet.BSc_Thesis.Repositories.UserRepository
 import edu.agh.iet.BSc_Thesis.Util.JwtUtils
 import edu.agh.iet.BSc_Thesis.Util.JwtUtils.generateToken
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 
 
