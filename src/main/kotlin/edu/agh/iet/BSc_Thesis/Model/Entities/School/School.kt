@@ -21,6 +21,11 @@ data class School(
                 this.id
         )
     }
+
+    fun addSchoolClass(schoolClass: SchoolClass) {
+        schoolClass.students.forEach { student -> student.schoolName = this.name }
+        this.classes.add(schoolClass)
+    }
 }
 
 data class SchoolRequest(
@@ -37,7 +42,7 @@ data class SchoolResponse(
 @Table(name = "school_class")
 data class SchoolClass(
         val classNumber: Long,
-        @OneToMany(targetEntity = Student::class)
+        @OneToMany(targetEntity = Student::class, cascade = [CascadeType.ALL])
         val students: MutableList<Student>,
         @Id
         @GeneratedValue(strategy = GenerationType.AUTO)

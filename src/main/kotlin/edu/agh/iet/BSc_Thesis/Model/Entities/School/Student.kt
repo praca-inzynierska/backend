@@ -13,6 +13,7 @@ data class Student(
         val user: User,
         @ElementCollection
         val grades: MutableList<Long>,
+        var schoolName: String = "",
         @Id @GeneratedValue(strategy = GenerationType.AUTO)
         val id: Long = -1
 ) : Serializable {
@@ -20,6 +21,7 @@ data class Student(
                 return StudentResponse(
                         this.user.toUserResponse(),
                         this.grades,
+                        this.schoolName,
                         this.id
                 )
         }
@@ -32,5 +34,6 @@ data class StudentRequest(
 data class StudentResponse(
         val user: UserResponse,
         val grades: MutableList<Long>,
+        val schoolName: String,
         val id: Long
 )

@@ -22,10 +22,10 @@ class TaskSessionController : BaseController() {
     fun addTaskSession(@RequestBody taskSessionRequest: TaskSessionRequest, @RequestHeader("Token") token: String): ResponseEntity<Any> {
         return if (isTeacher(token)) {
             val task = taskRepository.getOne(taskSessionRequest.taskId)
-            val classSession = classSessionRepository.getOne(taskSessionRequest.classSessionId)
-//            val students = studentRepository.getAllByIdIn(taskSessionRequest.studentIds).toMutableList()
-            val students = classSession.students
-            val taskSession = TaskSession(
+            var classSession = classSessionRepository.getOne(taskSessionRequest.classSessionId)
+            val taskSessions = taskSessionRequest.groups.map { group ->
+                val students = classSession.students.filter { group.contains(it.id) }.toMutableList()
+                var taskSession = TaskSession(
                     task,
                     students,
                     classSession,
@@ -33,22 +33,24 @@ class TaskSessionController : BaseController() {
                     needsHelp = false,
                     readyToRate = false,
                     deadline = LocalDateTime.now()                          // TODO: naprawic to
-                            .plusMinutes(100)
-                            .toEpochSecond(ZoneOffset.UTC)
-            )
-            if(task.tools.contains("whiteboard")) {
-                val toolState = ToolState(
+                        .plusMinutes(task.minutes)
+                        .toEpochSecond(ZoneOffset.UTC) * 1000
+                )
+                classSession.addTaskSession(taskSession)
+                classSession = classSessionRepository.save(classSession)
+                taskSession = taskSessionRepository.save(taskSession)
+                if(task.tools.contains("whiteboard")) {
+                    val toolState = ToolState(
                         taskSession,
                         "",
                         taskSession.id.toString(),          // + hash
                         "whiteboard"
-                )
-                toolStateRepository.save(toolState)
+                    )
+                    toolStateRepository.save(toolState)
+                }
+                taskSession
             }
-            classSession.addTaskSession(taskSession)
-            classSessionRepository.save(classSession)
-            taskSessionRepository.save(taskSession)
-            ResponseEntity(taskSession.response(), HttpStatus.CREATED)
+            ResponseEntity(classSession, HttpStatus.CREATED)
         } else ResponseEntity(HttpStatus.UNAUTHORIZED)
     }
 

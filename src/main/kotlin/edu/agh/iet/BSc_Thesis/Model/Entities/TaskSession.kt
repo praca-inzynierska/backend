@@ -9,7 +9,7 @@ import javax.persistence.*;
 data class TaskSession(
         @ManyToOne
         var task: Task? = null,
-        @OneToMany
+        @ManyToMany
         var students: MutableList<Student>,
         @ManyToOne
         var classSession: ClassSession,
@@ -46,7 +46,7 @@ data class TaskSession(
 data class TaskSessionRequest(
         var taskId: Long = -1,
         var classSessionId: Long = -1,
-        var studentIds: MutableList<Long>
+        var groups: MutableList<MutableList<Long>>
 )
 
 data class TaskSessionResponse(

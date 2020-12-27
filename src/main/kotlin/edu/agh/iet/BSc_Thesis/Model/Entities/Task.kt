@@ -15,6 +15,7 @@ data class Task(
         var teacher: Teacher? = null,
         var name: String = "",
         var subject: String? = "",
+        @Lob
         var description: String = "",
         @ElementCollection
         var tools: MutableList<String>,

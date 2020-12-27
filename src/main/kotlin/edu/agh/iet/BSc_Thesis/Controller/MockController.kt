@@ -76,15 +76,16 @@ class MockController : BaseController() {
         var numberOfClasses = 4
         var schools = schoolNames.map { School(it, mutableListOf()) }
         var classes = 0.toLong().rangeTo(numberOfClasses * schoolNames.size)
-                .map { SchoolClass(it % numberOfClasses, mutableListOf()) }
+                .map { SchoolClass(it % numberOfClasses + 1, mutableListOf()) }
         students.forEachIndexed { index, student ->
             classes[index % classes.size].students.add(student)
         }
         classes.forEachIndexed { index, schoolClass ->
-            schools[index % schools.size].classes.add(schoolClass)
+            schools[index % schools.size].addSchoolClass(schoolClass)
         }
 
         schools = schools.map { schoolRepository.save(it) }
+        students.map { studentRepository.save(it) }
 
         //tasks
         var task0: Task = Task(

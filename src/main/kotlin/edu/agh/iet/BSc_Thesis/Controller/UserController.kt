@@ -4,12 +4,8 @@ import edu.agh.iet.BSc_Thesis.Controller.UserInfoResponse.Companion.toUserInfoRe
 import edu.agh.iet.BSc_Thesis.Model.Entities.School.Student
 import edu.agh.iet.BSc_Thesis.Model.Entities.School.Teacher
 import edu.agh.iet.BSc_Thesis.Model.Entities.User
-import edu.agh.iet.BSc_Thesis.Repositories.StudentRepository
-import edu.agh.iet.BSc_Thesis.Repositories.TeacherRepository
-import edu.agh.iet.BSc_Thesis.Repositories.UserRepository
 import edu.agh.iet.BSc_Thesis.Util.JwtUtils
 import edu.agh.iet.BSc_Thesis.Util.JwtUtils.generateToken
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 
 
@@ -29,14 +25,15 @@ class UserController : BaseController() {
             val studentToCreate = Student(userToCreate, mutableListOf())
             studentRepository.save(studentToCreate)
         }
-        return LoginResponse(generateToken(userToCreate), userToCreate.username)
+        return LoginResponse(generateToken(userToCreate), userToCreate.username, registerRequest.isTeacher)
     }
 
     @CrossOrigin
     @PostMapping("/login")
     fun login(@RequestBody loginRequest: LoginRequest): LoginResponse {
         val user = userRepository.getUserByUsernameAndPassword(username = loginRequest.username, password = loginRequest.password)
-        return LoginResponse(generateToken(user), "${user.firstName} ${user.lastName}")
+        val token = generateToken(user)
+        return LoginResponse(token, "${user.firstName} ${user.lastName}", isTeacher(token))
     }
 
     @CrossOrigin
@@ -50,7 +47,8 @@ class UserController : BaseController() {
 
 data class LoginResponse(
         var token: String,
-        var username: String
+        var username: String,
+        var isTeacher: Boolean
 )
 
 data class UserInfoResponse(
