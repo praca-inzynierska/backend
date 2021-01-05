@@ -1,5 +1,6 @@
 package edu.agh.iet.BSc_Thesis.Controller
 
+import at.favre.lib.crypto.bcrypt.BCrypt
 import edu.agh.iet.BSc_Thesis.Model.Entities.ClassSession
 import edu.agh.iet.BSc_Thesis.Model.Entities.School.School
 import edu.agh.iet.BSc_Thesis.Model.Entities.School.SchoolClass
@@ -56,7 +57,7 @@ class MockController : BaseController() {
         //users
         var students = names.foldIndexed(mutableListOf<Student>(), { index, list, name ->
             var lastName = surnames[index % surnames.size]
-            var userToAdd = User("${name.toLowerCase()}_${lastName.toLowerCase()}", name, lastName, "asd")
+            var userToAdd = User("${name.toLowerCase()}_${lastName.toLowerCase()}", name, lastName, BCrypt.withDefaults().hashToString(12,"asd".toCharArray()))
             var studentToAdd = Student(userToAdd, mutableListOf())
             list.add(studentToAdd)
             list

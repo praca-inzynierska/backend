@@ -47,7 +47,7 @@ data class ClassSession(
         return ClassSessionResponse(
                 this.students.map { it.response() }.toMutableList(),
                 this.teacher.simple(),
-                this.taskSessions,
+                this.taskSessions.map {it.response()}.toMutableList(),
                 this.startDate,
                 this.endDate,
                 this.id
@@ -71,7 +71,7 @@ data class ClassSessionRequest(
 data class ClassSessionResponse(
         val students: MutableList<StudentResponse>,
         val teacher: TeacherSimpleResponse,
-        val taskSessions: MutableList<TaskSession>,
+        val taskSessions: MutableList<TaskSessionResponse>,
         val startDate: Long,
         val endDate: Long,
         val id: Long

@@ -28,6 +28,7 @@ dependencies {
 	}
 	implementation("org.hibernate:hibernate-core:5.4.14.Final")
 	implementation("io.jsonwebtoken:jjwt:0.9.1")
+	implementation("at.favre.lib:bcrypt:0.9.0")
 	annotationProcessor("org.springframework.boot", "spring-boot-configuration-processor")
 }
 
